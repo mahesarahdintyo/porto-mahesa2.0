@@ -14,7 +14,9 @@ import {
   ToroLanternArtifact,
 } from "./shrine-artifacts"
 import { ShrineChamberModal, ShrineId, SHRINES } from "./shrine-chamber-modal"
-import { Volume2, VolumeX, Shield, Sparkles, Compass } from "lucide-react"
+import { Volume2, VolumeX, Shield, Sparkles, Compass, Sword } from "lucide-react"
+import { SensuFanNav } from "./sensu-fan-nav"
+import { ShojiIntro } from "./shoji-intro"
 
 /** Reusable plaque label shown below each shrine artifact */
 function ArtifactLabel({
@@ -51,13 +53,23 @@ export function ShrineCourtyard() {
   const { profile, loading } = usePortfolioData()
   const isDark = theme === "yurei"
 
+  const [mounted, setMounted] = useState(false)
   const [activeShrine, setActiveShrine] = useState<ShrineId | null>(null)
   const [hoveredShrine, setHoveredShrine] = useState<ShrineId | null>(null)
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 })
+  const [introKey, setIntroKey] = useState(0)
+  const [manualIntroTrigger, setManualIntroTrigger] = useState(false)
+
+  const triggerIntroReplay = () => {
+    setIntroKey((k) => k + 1)
+    setManualIntroTrigger(true)
+  }
 
   // Parallax tilt based on cursor
   useEffect(() => {
+    setMounted(true)
+
     function handleMouseMove(e: MouseEvent) {
       const x = (e.clientX / window.innerWidth - 0.5) * 20
       const y = (e.clientY / window.innerHeight - 0.5) * 15
@@ -136,6 +148,21 @@ export function ShrineCourtyard() {
             ) : (
               <VolumeX className="w-4 h-4 opacity-50" />
             )}
+          </button>
+
+          {/* Katana Slash Shoji Intro Replay Button */}
+          <button
+            onClick={triggerIntroReplay}
+            className="p-2.5 rounded-full border backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95 shadow-sm group cursor-pointer"
+            style={{
+              borderColor: "var(--border-color)",
+              background: isDark ? "rgba(21, 18, 16, 0.75)" : "rgba(251, 245, 234, 0.8)",
+              color: "var(--text-primary)",
+            }}
+            aria-label="Tebas & Buka Pintu Shoji"
+            title="Tebas & Buka Pintu Shoji (Intro Sinematik)"
+          >
+            <Sword className="w-4 h-4 transition-transform group-hover:-rotate-45" />
           </button>
 
           {/* Admin CMS Portal Link */}
@@ -318,6 +345,26 @@ export function ShrineCourtyard() {
         onClose={() => setActiveShrine(null)}
         onSelectShrine={(id) => handleOpenShrine(id)}
       />
+
+      {/* Client-only components: rendered only after hydration (mounted = true) */}
+      {mounted && (
+        <>
+          {/* Interactive Sensu Folding Fan Nav (Bottom Right) */}
+          <SensuFanNav
+            activeShrine={activeShrine}
+            onSelectShrine={(id) => handleOpenShrine(id)}
+          />
+
+          {/* Shoji Door Entrance Experience (Only renders when triggered via Katana button) */}
+          {manualIntroTrigger && (
+            <ShojiIntro
+              key={introKey}
+              manualTrigger={manualIntroTrigger}
+              onComplete={() => setManualIntroTrigger(false)}
+            />
+          )}
+        </>
+      )}
     </div>
   )
 }
