@@ -1,12 +1,12 @@
 "use client"
 
 import { useScrollReveal } from "./use-scroll-reveal"
+import { usePortfolioData } from "./portfolio-data-provider"
 import { BrushDivider, SkillMark } from "./motifs"
-
-const SKILLS = ["UI", "UX", "React", "Next.js", "TS", "Motion", "Canvas", "Figma"]
 
 export function SkillsSection() {
   const revealRef = useScrollReveal<HTMLDivElement>()
+  const { skills } = usePortfolioData()
 
   return (
     <section id="skills" className="hanakage-section">
@@ -15,11 +15,12 @@ export function SkillsSection() {
         <h2 className="hanakage-heading text-4xl md:text-5xl mb-6">Segel yang Saya Bawa</h2>
         <BrushDivider />
         <div className="flex flex-wrap gap-5 mt-8">
-          {SKILLS.map((skill) => (
-            <SkillMark key={skill} label={skill} />
+          {skills.map((skill) => (
+            <SkillMark key={skill.id || skill.name} label={skill.name} />
           ))}
         </div>
       </div>
     </section>
   )
 }
+
