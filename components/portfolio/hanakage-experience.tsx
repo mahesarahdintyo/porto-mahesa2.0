@@ -1,5 +1,6 @@
 "use client"
 
+import { PortfolioDataProvider } from "./portfolio-data-provider"
 import { HanakageThemeProvider } from "./theme-provider"
 import { ParticleCanvas } from "./particle-canvas"
 import { Atmosphere } from "./atmosphere"
@@ -13,18 +14,21 @@ import { ContactSection } from "./contact-section"
 
 export function HanakageExperience() {
   return (
-    <HanakageThemeProvider>
-      <Atmosphere />
-      <ParticleCanvas />
-      <SiteNav />
-      <ThemeToggle />
-      <main className="relative">
-        <HeroSection />
-        <AboutSection />
-        <SkillsSection />
-        <ProjectsSection />
-        <ContactSection />
-      </main>
-    </HanakageThemeProvider>
+    <PortfolioDataProvider>
+      <HanakageThemeProvider>
+        <Atmosphere />
+        <ParticleCanvas />
+        <SiteNav />
+        <ThemeToggle />
+        <main className="relative">
+          <HeroSection />
+          <AboutSection />
+          <SkillsSection />
+          <ProjectsSection />
+          <ContactSection />
+        </main>
+      </HanakageThemeProvider>
+    </PortfolioDataProvider>
   )
 }
+
