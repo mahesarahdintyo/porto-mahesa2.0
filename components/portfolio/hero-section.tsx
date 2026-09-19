@@ -4,13 +4,17 @@ import { useHanakageTheme } from "./theme-provider"
 import { usePortfolioData } from "./portfolio-data-provider"
 import { GhostKanji } from "./motifs"
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onNavigate?: (section: "projects" | "contact") => void
+}
+
+export function HeroSection({ onNavigate }: HeroSectionProps = {}) {
   const { theme } = useHanakageTheme()
   const { profile, loading } = usePortfolioData()
   const isDark = theme === "yurei"
 
   return (
-    <section id="hero" className="hanakage-section min-h-[90vh] flex flex-col justify-center relative">
+    <section id="hero" className="hanakage-section min-h-[70vh] flex flex-col justify-center relative">
       <GhostKanji char="影" top="18%" left="72%" delay={0} />
       <GhostKanji char="夢" top="65%" left="10%" delay={6} />
 
@@ -35,12 +39,20 @@ export function HeroSection() {
       </p>
 
       <div className="mt-10 flex flex-wrap gap-4">
-        <a href="#projects" className="hanakage-btn">
+        <button
+          type="button"
+          onClick={() => onNavigate?.("projects")}
+          className="hanakage-btn"
+        >
           Lihat Karya
-        </a>
-        <a href="#contact" className="hanakage-btn">
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate?.("contact")}
+          className="hanakage-btn"
+        >
           Hubungi Saya
-        </a>
+        </button>
       </div>
     </section>
   )

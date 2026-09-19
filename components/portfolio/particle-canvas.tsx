@@ -44,6 +44,9 @@ export function ParticleCanvas() {
     const ctx = canvas.getContext("2d")
     if (!ctx) return
 
+    const safeCanvas: HTMLCanvasElement = canvas
+    const safeCtx: CanvasRenderingContext2D = ctx
+
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
     const lowPower = (navigator.hardwareConcurrency ?? 4) <= 4 || window.innerWidth < 640
 
@@ -52,12 +55,13 @@ export function ParticleCanvas() {
     let dpr = Math.min(window.devicePixelRatio || 1, 2)
 
     function resize() {
+      if (!safeCanvas || !safeCtx) return
       width = window.innerWidth
       height = window.innerHeight
       dpr = Math.min(window.devicePixelRatio || 1, 2)
-      canvas.width = width * dpr
-      canvas.height = height * dpr
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+      safeCanvas.width = width * dpr
+      safeCanvas.height = height * dpr
+      safeCtx.setTransform(dpr, 0, 0, dpr, 0, 0)
     }
     resize()
     window.addEventListener("resize", resize)
@@ -113,6 +117,17 @@ export function ParticleCanvas() {
     let last = performance.now()
     let rafId = 0
 
+    function handleWindGust(e: Event) {
+      const ce = e as CustomEvent<{ dir?: number; speed?: number }>
+      const dir = ce.detail?.dir ?? 1
+      const speed = ce.detail?.speed ?? 3.2
+      windGust = dir * speed
+      setTimeout(() => {
+        windGust = 0
+      }, 1000)
+    }
+    window.addEventListener("hanakage:wind", handleWindGust)
+
     function frame(now: number) {
       const dt = Math.min(now - last, 48)
       last = now
@@ -126,7 +141,7 @@ export function ParticleCanvas() {
         }, 1200)
       }
 
-      ctx.clearRect(0, 0, width, height)
+      safeCtx.clearRect(0, 0, width, height)
 
       const isDark = themeRef.current === "yurei"
       const repulseRadius = isDark ? 130 : 145
@@ -164,26 +179,26 @@ export function ParticleCanvas() {
         if (p.x < -40) p.x = width + 40
 
         const depthAlpha = p.layer === 0 ? 0.55 : p.layer === 1 ? 0.8 : 1
-        ctx.save()
-        ctx.globalAlpha = depthAlpha
-        ctx.translate(p.x, p.y)
-        ctx.rotate(p.rotation)
+        safeCtx.save()
+        safeCtx.globalAlpha = depthAlpha
+        safeCtx.translate(p.x, p.y)
+        safeCtx.rotate(p.rotation)
         if (p.layer === 0 && !p.ember) {
-          ctx.filter = "blur(1px)"
+          safeCtx.filter = "blur(1px)"
         }
 
         if (p.ember) {
-          const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, p.size * 1.8)
+          const glow = safeCtx.createRadialGradient(0, 0, 0, 0, 0, p.size * 1.8)
           glow.addColorStop(0, "rgba(217, 119, 46, 0.9)")
           glow.addColorStop(1, "rgba(217, 119, 46, 0)")
-          ctx.fillStyle = glow
-          ctx.beginPath()
-          ctx.arc(0, 0, p.size * 1.8, 0, Math.PI * 2)
-          ctx.fill()
+          safeCtx.fillStyle = glow
+          safeCtx.beginPath()
+          safeCtx.arc(0, 0, p.size * 1.8, 0, Math.PI * 2)
+          safeCtx.fill()
         } else {
-          drawPetal(ctx, p.size, p.hue)
+          drawPetal(safeCtx, p.size, p.hue)
         }
-        ctx.restore()
+        safeCtx.restore()
       }
 
       rafId = requestAnimationFrame(frame)
@@ -198,6 +213,7 @@ export function ParticleCanvas() {
       window.removeEventListener("resize", resize)
       window.removeEventListener("pointermove", handlePointerMove)
       window.removeEventListener("pointerleave", handlePointerLeave)
+      window.removeEventListener("hanakage:wind", handleWindGust)
     }
   }, [])
 
