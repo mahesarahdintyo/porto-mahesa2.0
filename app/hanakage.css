@@ -578,3 +578,120 @@ html.hanakage-flicker {
   background: transparent;
 }
 
+/* -------------------------------------------------------------------------
+   Shoji Intro & Katana Slash animations
+   ------------------------------------------------------------------------- */
+
+/* Sharp, lightning-fast draw with smooth exponential light dissolution */
+@keyframes hanakage-katana-draw {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  }
+  6% {
+    opacity: 1;
+  }
+  28% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  60% {
+    opacity: 0.75;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+/* Soft ambient trail & light mist — buttery smooth dissipation */
+@keyframes hanakage-katana-trail {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  }
+  8% {
+    opacity: 0.55;
+  }
+  30% {
+    stroke-dashoffset: 0;
+    opacity: 0.5;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  65% {
+    opacity: 0.28;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+
+/* Anamorphic blade glint & flash at impact center */
+@keyframes hanakage-slash-flare {
+  0% {
+    opacity: 0;
+    transform: scale(0.15);
+    animation-timing-function: cubic-bezier(0.1, 0.9, 0.2, 1);
+  }
+  18% {
+    opacity: 1;
+    transform: scale(1.35);
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  48% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+}
+
+/* Incandescent vapor afterglow along the cut edge */
+@keyframes hanakage-katana-vapor {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    opacity: 0;
+  }
+  32% {
+    opacity: 0.75;
+    animation-timing-function: cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  68% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Screen shake on shoji panels upon impact */
+@keyframes hanakage-slash-shake {
+  0%   { transform: translateX(0); }
+  20%  { transform: translateX(-6px) translateY(2px); }
+  40%  { transform: translateX(5px) translateY(-3px); }
+  60%  { transform: translateX(-3px); }
+  80%  { transform: translateX(2px); }
+  100% { transform: translateX(0); }
+}
+
+.hanakage-shoji-shake {
+  animation: hanakage-slash-shake 0.35s ease-out forwards;
+}
+
+@keyframes hanakage-shoji-seal-pulse {
+  0%, 100% { opacity: 0.7; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.03); }
+}
+
+.hanakage-shoji-seal {
+  animation: hanakage-shoji-seal-pulse 2s ease-in-out infinite;
+}
+

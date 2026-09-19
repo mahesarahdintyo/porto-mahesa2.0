@@ -23,13 +23,64 @@ function getAudioContext(): AudioContext | null {
  * using Web Audio API without external audio files.
  */
 export function playZenSound(
-  type: "chime" | "wood" | "water" | "gong" | "paper" = "chime",
+  type: "chime" | "wood" | "water" | "gong" | "paper" | "slash" | "shoji" = "chime",
   isDark = false,
 ) {
   try {
     const ctx = getAudioContext()
     if (!ctx) return
     const now = ctx.currentTime
+
+    if (type === "slash") {
+      // Katana swift blade slash + air swoosh
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = "sine"
+      osc.frequency.setValueAtTime(isDark ? 1600 : 2400, now)
+      osc.frequency.exponentialRampToValueAtTime(120, now + 0.18)
+
+      gain.gain.setValueAtTime(0.18, now)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18)
+
+      // Add high metallic sheen
+      const metalOsc = ctx.createOscillator()
+      const metalGain = ctx.createGain()
+      metalOsc.type = "triangle"
+      metalOsc.frequency.setValueAtTime(isDark ? 3200 : 4800, now)
+      metalOsc.frequency.exponentialRampToValueAtTime(400, now + 0.1)
+
+      metalGain.gain.setValueAtTime(0.1, now)
+      metalGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1)
+
+      metalOsc.connect(metalGain)
+      metalGain.connect(ctx.destination)
+      metalOsc.start(now)
+      metalOsc.stop(now + 0.1)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now)
+      osc.stop(now + 0.18)
+      return
+    }
+
+    if (type === "shoji") {
+      // Wooden sliding door sliding friction
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = "sawtooth"
+      osc.frequency.setValueAtTime(isDark ? 90 : 120, now)
+      osc.frequency.linearRampToValueAtTime(isDark ? 70 : 95, now + 0.4)
+
+      gain.gain.setValueAtTime(0.04, now)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.4)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now)
+      osc.stop(now + 0.4)
+      return
+    }
 
     if (type === "wood") {
       // Hyōshigi wooden clappers

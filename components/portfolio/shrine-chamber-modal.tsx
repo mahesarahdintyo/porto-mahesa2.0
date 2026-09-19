@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useHanakageTheme } from "./theme-provider"
 import { playZenSound } from "@/lib/sound"
 import { X, ChevronLeft, ChevronRight } from "lucide-react"
@@ -41,6 +41,33 @@ export function ShrineChamberModal({
 }: ShrineChamberModalProps) {
   const { theme } = useHanakageTheme()
   const isDark = theme === "yurei"
+  const [doorsOpen, setDoorsOpen] = useState(false)
+  const isClosingRef = useRef(false)
+
+  // Handle opening Shoji slide animation
+  useEffect(() => {
+    if (activeShrine) {
+      isClosingRef.current = false
+      setDoorsOpen(false)
+      playZenSound("shoji", isDark)
+      const timer = setTimeout(() => {
+        setDoorsOpen(true)
+      }, 50)
+      return () => clearTimeout(timer)
+    }
+  }, [activeShrine, isDark])
+
+  const handleGracefulClose = () => {
+    if (isClosingRef.current) return
+    isClosingRef.current = true
+    setDoorsOpen(false)
+    playZenSound("shoji", isDark)
+    playZenSound("wood", isDark)
+    setTimeout(() => {
+      onClose()
+      isClosingRef.current = false
+    }, 450)
+  }
 
   // Close on ESC key or navigate with Arrow keys
   useEffect(() => {
@@ -48,16 +75,17 @@ export function ShrineChamberModal({
 
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
-        playZenSound("wood", isDark)
-        onClose()
+        handleGracefulClose()
       } else if (e.key === "ArrowRight") {
         const currentIdx = SHRINES.findIndex((s) => s.id === activeShrine)
         if (currentIdx < SHRINES.length - 1) {
+          playZenSound("paper", isDark)
           onSelectShrine(SHRINES[currentIdx + 1].id)
         }
       } else if (e.key === "ArrowLeft") {
         const currentIdx = SHRINES.findIndex((s) => s.id === activeShrine)
         if (currentIdx > 0) {
+          playZenSound("paper", isDark)
           onSelectShrine(SHRINES[currentIdx - 1].id)
         }
       }
@@ -65,7 +93,7 @@ export function ShrineChamberModal({
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [activeShrine, isDark, onClose, onSelectShrine])
+  }, [activeShrine, isDark, onSelectShrine])
 
   if (!activeShrine) return null
 
@@ -74,12 +102,14 @@ export function ShrineChamberModal({
 
   const handleNext = () => {
     if (currentIdx < SHRINES.length - 1) {
+      playZenSound("paper", isDark)
       onSelectShrine(SHRINES[currentIdx + 1].id)
     }
   }
 
   const handlePrev = () => {
     if (currentIdx > 0) {
+      playZenSound("paper", isDark)
       onSelectShrine(SHRINES[currentIdx - 1].id)
     }
   }
@@ -89,14 +119,13 @@ export function ShrineChamberModal({
       role="dialog"
       aria-modal="true"
       aria-label={`Ruang Kuil: ${currentShrine.name}`}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-10 animate-in fade-in duration-300 backdrop-blur-md"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 md:p-10 transition-opacity duration-300 backdrop-blur-md"
       style={{
-        background: isDark ? "rgba(5, 4, 3, 0.85)" : "rgba(43, 35, 32, 0.55)",
+        background: isDark ? "rgba(5, 4, 3, 0.88)" : "rgba(43, 35, 32, 0.6)",
       }}
       onClick={(e) => {
         if (e.target === e.currentTarget) {
-          playZenSound("wood", isDark)
-          onClose()
+          handleGracefulClose()
         }
       }}
     >
@@ -112,10 +141,62 @@ export function ShrineChamberModal({
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Sliding Shoji Panels inside Chamber Window */}
+        <div
+          className="absolute inset-0 pointer-events-none z-30 flex overflow-hidden"
+          aria-hidden="true"
+        >
+          {/* Left Shoji Panel */}
+          <div
+            className="w-1/2 h-full transition-transform duration-500 ease-in-out border-r"
+            style={{
+              transform: doorsOpen ? "translateX(-100%)" : "translateX(0)",
+              background: isDark ? "#17131e" : "#fdf6ec",
+              borderColor: isDark ? "#3c324c" : "#8e2b20",
+              boxShadow: "5px 0 20px rgba(0,0,0,0.3)",
+            }}
+          >
+            <div
+              className="w-full h-full opacity-30"
+              style={{
+                backgroundImage: isDark
+                  ? `linear-gradient(to right, rgba(122,111,163,0.4) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(122,111,163,0.4) 1px, transparent 1px)`
+                  : `linear-gradient(to right, rgba(142,43,32,0.3) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(142,43,32,0.3) 1px, transparent 1px)`,
+                backgroundSize: "36px 36px",
+              }}
+            />
+          </div>
+
+          {/* Right Shoji Panel */}
+          <div
+            className="w-1/2 h-full transition-transform duration-500 ease-in-out border-l"
+            style={{
+              transform: doorsOpen ? "translateX(100%)" : "translateX(0)",
+              background: isDark ? "#17131e" : "#fdf6ec",
+              borderColor: isDark ? "#3c324c" : "#8e2b20",
+              boxShadow: "-5px 0 20px rgba(0,0,0,0.3)",
+            }}
+          >
+            <div
+              className="w-full h-full opacity-30"
+              style={{
+                backgroundImage: isDark
+                  ? `linear-gradient(to right, rgba(122,111,163,0.4) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(122,111,163,0.4) 1px, transparent 1px)`
+                  : `linear-gradient(to right, rgba(142,43,32,0.3) 1px, transparent 1px),
+                     linear-gradient(to bottom, rgba(142,43,32,0.3) 1px, transparent 1px)`,
+                backgroundSize: "36px 36px",
+              }}
+            />
+          </div>
+        </div>
+
         {/* Top Header Rail */}
         <div
-          className="flex items-center justify-between px-6 py-4 border-b select-none"
-          style={{ borderColor: "var(--border-color)" }}
+          className="relative z-10 flex items-center justify-between px-6 py-4 border-b select-none"
+          style={{ borderColor: "var(--border-color)", background: "var(--card-bg)" }}
         >
           {/* Shrine Title & Kanji Badge */}
           <div className="flex items-center gap-3">
@@ -166,11 +247,8 @@ export function ShrineChamberModal({
 
             {/* Traditional Hanko Seal "戻" (Return) Close Button */}
             <button
-              onClick={() => {
-                playZenSound("wood", isDark)
-                onClose()
-              }}
-              className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm"
+              onClick={handleGracefulClose}
+              className="group flex items-center gap-1.5 px-3 py-1.5 rounded-lg border transition-all duration-200 hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
               style={{
                 borderColor: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
                 background: isDark ? "rgba(122, 111, 163, 0.15)" : "rgba(178, 58, 46, 0.1)",
@@ -188,7 +266,7 @@ export function ShrineChamberModal({
         </div>
 
         {/* Chamber Content Scrollable Area */}
-        <div className="flex-1 overflow-y-auto p-4 sm:p-8 md:p-10 emaki-scrollable">
+        <div className="relative z-10 flex-1 overflow-y-auto p-4 sm:p-8 md:p-10 emaki-scrollable">
           {activeShrine === "hero" && (
             <HeroSection
               onNavigate={(s) => onSelectShrine(s === "projects" ? "projects" : "contact")}
@@ -202,15 +280,18 @@ export function ShrineChamberModal({
 
         {/* Bottom footer bar with shrine shortcut tabs */}
         <div
-          className="px-4 py-3 border-t flex items-center justify-between text-xs select-none bg-black/5 dark:bg-white/5"
+          className="relative z-10 px-4 py-3 border-t flex items-center justify-between text-xs select-none bg-black/5 dark:bg-white/5"
           style={{ borderColor: "var(--border-color)", color: "var(--text-muted)" }}
         >
           <div className="flex items-center gap-2 overflow-x-auto py-1">
             {SHRINES.map((s) => (
               <button
                 key={s.id}
-                onClick={() => onSelectShrine(s.id)}
-                className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1 text-[11px] whitespace-nowrap ${
+                onClick={() => {
+                  playZenSound("paper", isDark)
+                  onSelectShrine(s.id)
+                }}
+                className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1 text-[11px] whitespace-nowrap cursor-pointer ${
                   s.id === activeShrine
                     ? "font-bold shadow-sm"
                     : "opacity-60 hover:opacity-100"
