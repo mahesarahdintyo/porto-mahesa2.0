@@ -701,18 +701,19 @@ html.hanakage-flicker {
 
 @keyframes hanakage-star-twinkle {
   0%, 100% {
-    opacity: 0.35;
-    transform: scale(0.85);
+    opacity: 0.4;
+    filter: drop-shadow(0 0 2px currentColor);
   }
   50% {
     opacity: 1;
-    transform: scale(1.35);
-    filter: drop-shadow(0 0 8px currentColor);
+    filter: drop-shadow(0 0 9px currentColor) brightness(1.4);
   }
 }
 
 .hanakage-star-twinkle {
   animation: hanakage-star-twinkle 2.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
 }
 
 @keyframes hanakage-constellation-dash {

@@ -31,47 +31,43 @@ function CelestialConstellation({
   const constellations = [
     {
       id: "skills" as ShrineId,
-      // Torii (500, 270) -> Omikuji (190, 120)
+      // Torii center -> Omikuji (top-left)
       d: "M 480,250 Q 330,200 190,120",
       stars: [
         { cx: 395, cy: 215, delay: "0s" },
         { cx: 310, cy: 175, delay: "0.6s" },
         { cx: 235, cy: 140, delay: "1.2s" },
       ],
-      targetStar: { cx: 190, cy: 120 },
     },
     {
       id: "projects" as ShrineId,
-      // Torii (500, 270) -> Ema (810, 120)
+      // Torii center -> Ema wall (top-right)
       d: "M 520,250 Q 670,200 810,120",
       stars: [
         { cx: 605, cy: 215, delay: "0.2s" },
         { cx: 690, cy: 175, delay: "0.8s" },
         { cx: 765, cy: 140, delay: "1.4s" },
       ],
-      targetStar: { cx: 810, cy: 120 },
     },
     {
       id: "about" as ShrineId,
-      // Torii (500, 270) -> Chozubachi (190, 470)
+      // Torii center -> Chozubachi (bottom-left)
       d: "M 480,290 Q 330,370 190,470",
       stars: [
         { cx: 395, cy: 335, delay: "0.3s" },
         { cx: 310, cy: 390, delay: "0.9s" },
         { cx: 235, cy: 440, delay: "1.5s" },
       ],
-      targetStar: { cx: 190, cy: 470 },
     },
     {
       id: "contact" as ShrineId,
-      // Torii (500, 270) -> Toro Lantern (810, 470)
+      // Torii center -> Toro Lantern (bottom-right)
       d: "M 520,290 Q 670,370 810,470",
       stars: [
         { cx: 605, cy: 335, delay: "0.4s" },
         { cx: 690, cy: 390, delay: "1.0s" },
         { cx: 765, cy: 440, delay: "1.6s" },
       ],
-      targetStar: { cx: 810, cy: 470 },
     },
   ]
 
@@ -92,22 +88,27 @@ function CelestialConstellation({
         </filter>
       </defs>
 
-      {/* Central Torii Sacred Star Anchor */}
-      <g transform="translate(500, 270)">
-        <circle
-          cx="0"
-          cy="0"
-          r="4.5"
-          fill={activeColor}
-          fillOpacity={hoveredShrine ? 0.95 : 0.4}
-          filter="url(#celestial-glow)"
-          className="hanakage-star-twinkle"
-        />
-        <circle cx="0" cy="0" r="1.5" fill="#ffffff" />
-      </g>
+      {/* Central Torii Sacred Star Anchor - only visible when a shrine is hovered */}
+      {hoveredShrine && (
+        <g transform="translate(500, 270)">
+          <circle
+            cx="0"
+            cy="0"
+            r="4.5"
+            fill={activeColor}
+            fillOpacity="0.95"
+            filter="url(#celestial-glow)"
+            className="hanakage-star-twinkle"
+          />
+          <circle cx="0" cy="0" r="1.5" fill="#ffffff" />
+        </g>
+      )}
 
       {constellations.map((c) => {
-        const isActive = hoveredShrine === c.id || hoveredShrine === "hero"
+        // When Torii (hero) is hovered → show all 4 constellations as a radial burst
+        // When an outer shrine is hovered → only show that shrine's own ray
+        const isActive =
+          hoveredShrine === "hero" || hoveredShrine === c.id
         if (!isActive) return null
 
         return (
@@ -149,28 +150,7 @@ function CelestialConstellation({
               </g>
             ))}
 
-            {/* Target Shrine Star Beacon */}
-            <g transform={`translate(${c.targetStar.cx}, ${c.targetStar.cy})`}>
-              <circle
-                cx="0"
-                cy="0"
-                r="10"
-                fill="none"
-                stroke={activeColor}
-                strokeWidth="1"
-                strokeDasharray="3 3"
-                strokeOpacity="0.5"
-                className="animate-spin"
-                style={{ animationDuration: "8s" }}
-              />
-              <path
-                d="M 0,-8 Q 0,0 8,0 Q 0,0 0,8 Q 0,0 -8,0 Q 0,0 0,-8 Z"
-                fill={activeColor}
-                fillOpacity="0.9"
-                filter="url(#celestial-glow)"
-              />
-              <circle cx="0" cy="0" r="2" fill="#ffffff" />
-            </g>
+
           </g>
         )
       })}
