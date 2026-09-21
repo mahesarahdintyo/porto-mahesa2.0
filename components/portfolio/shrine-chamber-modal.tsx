@@ -229,7 +229,7 @@ export function ShrineChamberModal({
             1. DESKTOP STICKY ZEN SIDEBAR (Left Panel)
             ======================================================== */}
         <aside
-          className="hidden md:flex flex-col justify-between w-72 lg:w-80 border-r shrink-0 p-6 select-none"
+          className="hidden md:flex flex-col justify-between w-56 lg:w-64 border-r shrink-0 p-4 select-none"
           style={{
             borderColor: "var(--border-color)",
             background: isDark ? "#12100e" : "#fbf5ea",
@@ -371,46 +371,65 @@ export function ShrineChamberModal({
             2. MOBILE STICKY TOP NAVIGATION BAR
             ======================================================== */}
         <div
-          className="md:hidden sticky top-0 z-30 px-4 py-2.5 border-b flex items-center justify-between shrink-0"
+          className="md:hidden sticky top-0 z-30 px-3 py-2 border-b flex items-center justify-between shrink-0 gap-2"
           style={{ borderColor: "var(--border-color)", background: isDark ? "#12100e" : "#fbf5ea" }}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 shrink-0">
             <span
               className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border font-serif"
               style={{
                 borderColor: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
                 color: isDark ? "var(--accent-ghost, #c8b8ff)" : "var(--accent-seal)",
+                background: isDark ? "rgba(122,111,163,0.15)" : "rgba(178,58,46,0.1)",
               }}
             >
               {SHRINES.find((s) => s.id === activeSection)?.kanji || "始"}
             </span>
-            <span className="font-bold text-sm">
+            <span className="font-bold text-xs tracking-wide">
               {SHRINES.find((s) => s.id === activeSection)?.name || "Home"}
             </span>
           </div>
 
           {/* Quick horizontal scrollable tabs */}
-          <div className="flex items-center gap-1 overflow-x-auto max-w-[50%] py-1">
-            {SHRINES.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => scrollToSection(s.id)}
-                className={`px-2 py-1 rounded text-xs font-serif transition-colors cursor-pointer ${
-                  activeSection === s.id
-                    ? "font-bold underline text-amber-500"
-                    : "opacity-60 hover:opacity-100"
-                }`}
-              >
-                {s.kanji}
-              </button>
-            ))}
+          <div className="flex items-center gap-1 overflow-x-auto py-0.5">
+            {SHRINES.map((s) => {
+              const isCurrent = activeSection === s.id
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => scrollToSection(s.id)}
+                  className="px-2 py-1 rounded-md text-xs font-serif border transition-all cursor-pointer shrink-0"
+                  style={{
+                    borderColor: isCurrent
+                      ? isDark
+                        ? "var(--accent-ghost, #7a6fa3)"
+                        : "var(--accent-seal)"
+                      : "transparent",
+                    background: isCurrent
+                      ? isDark
+                        ? "rgba(122, 111, 163, 0.22)"
+                        : "rgba(178, 58, 46, 0.12)"
+                      : "transparent",
+                    color: isCurrent
+                      ? isDark
+                        ? "var(--accent-ghost, #c8b8ff)"
+                        : "var(--accent-seal)"
+                      : "var(--text-muted)",
+                    fontWeight: isCurrent ? 700 : 400,
+                  }}
+                >
+                  {s.kanji}
+                </button>
+              )
+            })}
           </div>
 
           <button
             onClick={handleGracefulClose}
-            className="p-2 rounded-lg border text-xs font-bold transition-transform active:scale-95 cursor-pointer"
+            className="p-1.5 rounded-lg border text-xs font-bold transition-transform active:scale-95 cursor-pointer shrink-0"
             style={{ borderColor: "var(--border-color)", color: "var(--text-primary)" }}
-            aria-label="Close"
+            aria-label="Tutup Chamber (Kembali ke Kuil)"
+            title="Tutup & Kembali ke Taman (ESC)"
           >
             <X className="w-4 h-4" />
           </button>
@@ -428,7 +447,7 @@ export function ShrineChamberModal({
             willChange: "scroll-position",
           }}
         >
-          <div className="max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-8 md:px-12 py-10 md:py-16 space-y-20 sm:space-y-28">
+          <div className="w-full px-4 sm:px-8 md:px-14 py-6 sm:py-10 md:py-16 space-y-14 sm:space-y-24">
             {/* 1. HERO SECTION (01 壱・始) */}
             <section
               id="shrine-section-hero"

@@ -59,7 +59,7 @@ function StatCard({ icon, label, value, suffix = "", color, started }: StatCardP
   const count = useCountUp(value, 1600, started)
   return (
     <div
-      className="relative flex flex-col items-center justify-center gap-1.5 rounded-2xl border p-5 text-center overflow-hidden group transition-transform duration-200 hover:-translate-y-1"
+      className="relative flex flex-col items-center justify-center gap-2 sm:gap-3 rounded-2xl border p-5 sm:p-8 text-center overflow-hidden group transition-transform duration-200 hover:-translate-y-1"
       style={{
         borderColor: "var(--border-color)",
         background: "var(--bg-card, rgba(255,255,255,0.04))",
@@ -70,12 +70,12 @@ function StatCard({ icon, label, value, suffix = "", color, started }: StatCardP
         className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-2xl"
         style={{ background: `radial-gradient(ellipse at 50% 100%, ${color}22 0%, transparent 70%)` }}
       />
-      <span className="text-2xl select-none">{icon}</span>
-      <span className="text-3xl font-black font-mono tabular-nums leading-none" style={{ color }}>
-        {count}
+      <span className="text-3xl sm:text-4xl select-none">{icon}</span>
+      <span className="text-4xl sm:text-6xl font-black font-mono tabular-nums leading-none" style={{ color }}>
+        {count.toLocaleString()}
         {suffix}
       </span>
-      <span className="text-[11px] font-mono uppercase tracking-widest opacity-60" style={{ color: "var(--text-muted)" }}>
+      <span className="text-xs sm:text-sm font-mono uppercase tracking-widest opacity-60" style={{ color: "var(--text-muted)" }}>
         {label}
       </span>
     </div>
@@ -114,13 +114,13 @@ function GitHubHeatmap({ contributions, isDark }: { contributions: Contribution[
 
   return (
     <div className="overflow-x-auto pb-1">
-      <div className="flex gap-1 min-w-max">
+      <div className="flex gap-[4px] min-w-max">
         {/* Day-of-week labels */}
-        <div className="flex flex-col gap-[3px] pt-5 mr-1">
+        <div className="flex flex-col gap-[4px] pt-6 mr-1">
           {dayLabels.map((d, i) => (
             <span
               key={i}
-              className="text-[9px] font-mono w-[11px] leading-[11px] text-center"
+              className="text-[10px] font-mono w-[16px] leading-[16px] text-center"
               style={{ color: "var(--text-muted)", opacity: i % 2 === 0 ? 0.5 : 0.25 }}
             >
               {d}
@@ -143,10 +143,10 @@ function GitHubHeatmap({ contributions, isDark }: { contributions: Contribution[
             : ""
 
           return (
-            <div key={wi} className="flex flex-col gap-[3px]">
+            <div key={wi} className="flex flex-col gap-[4px]">
               {/* Month label row */}
               <span
-                className="text-[9px] font-mono h-[11px] leading-[11px] text-center"
+                className="text-[10px] font-mono h-[16px] leading-[16px] text-center"
                 style={{ color: "var(--text-muted)", opacity: showMonthLabel ? 0.6 : 0 }}
               >
                 {monthLabel}
@@ -156,7 +156,7 @@ function GitHubHeatmap({ contributions, isDark }: { contributions: Contribution[
                 <div
                   key={di}
                   title={day ? `${day.date}: ${day.count} contributions` : ""}
-                  className="w-[11px] h-[11px] rounded-[2px] transition-transform duration-150 hover:scale-125"
+                  className="w-[16px] h-[16px] rounded-[3px] transition-transform duration-150 hover:scale-125"
                   style={{
                     background: day ? levelColors[day.level] : "transparent",
                     cursor: day && day.count > 0 ? "pointer" : "default",
@@ -216,28 +216,28 @@ export function AboutSection() {
 
   return (
     <section id="about" className="hanakage-section relative overflow-visible">
-      <ToriiSilhouette className="absolute right-[-2rem] top-1/2 -translate-y-1/2 w-72 pointer-events-none" />
+      <ToriiSilhouette className="hidden sm:block absolute right-[-2rem] top-1/2 -translate-y-1/2 w-72 pointer-events-none" />
 
       {/* ── Bio text ── */}
-      <div ref={revealRef} className="hanakage-reveal relative max-w-2xl">
+      <div ref={revealRef} className="hanakage-reveal relative">
         <p className="hanakage-eyebrow mb-4">{about?.eyebrow ?? "About Me"}</p>
-        <h2 className="hanakage-heading text-4xl md:text-5xl mb-6">{about?.heading ?? ""}</h2>
+        <h2 className="hanakage-heading text-3xl sm:text-4xl md:text-5xl mb-6">{about?.heading ?? ""}</h2>
         <BrushDivider />
         {!loading && (
           <>
-            <p className="hanakage-body-text text-base md:text-lg">{about?.paragraph_1}</p>
-            <p className="hanakage-body-text text-base md:text-lg mt-4">{about?.paragraph_2}</p>
+            <p className="hanakage-body-text text-base sm:text-lg md:text-xl">{about?.paragraph_1}</p>
+            <p className="hanakage-body-text text-base sm:text-lg md:text-xl mt-4">{about?.paragraph_2}</p>
           </>
         )}
       </div>
 
       {/* ── Education Card ── */}
-      <div className="mt-10 max-w-2xl">
+      <div className="mt-8 sm:mt-10">
         <p
-          className="text-[11px] font-mono uppercase tracking-widest mb-3 flex items-center gap-2"
+          className="text-xs font-mono uppercase tracking-widest mb-4 flex items-center gap-2"
           style={{ color: accentColor }}
         >
-          <span className="font-serif text-base">学</span> Education
+          <span className="font-serif text-lg">学</span> Education
         </p>
         <div
           className="relative rounded-2xl border overflow-hidden group"
@@ -248,9 +248,9 @@ export function AboutSection() {
             className="absolute left-0 top-0 bottom-0 w-1 rounded-l-2xl"
             style={{ background: `linear-gradient(to bottom, ${accentColor}, ${accentSoft}88)` }}
           />
-          <div className="flex items-start gap-4 px-6 py-5 pl-7">
+          <div className="flex items-start gap-3.5 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 pl-5 sm:pl-7">
             <div
-              className="w-11 h-11 shrink-0 rounded-xl border flex items-center justify-center font-serif text-xl font-bold"
+              className="w-10 h-10 sm:w-11 sm:h-11 shrink-0 rounded-xl border flex items-center justify-center font-serif text-lg sm:text-xl font-bold"
               style={{ borderColor: "var(--border-color)", color: accentColor }}
             >
               大
@@ -286,14 +286,14 @@ export function AboutSection() {
       </div>
 
       {/* ── Stats Row ── */}
-      <div ref={statsRef} className="mt-10 max-w-2xl">
+      <div ref={statsRef} className="mt-8 sm:mt-10">
         <p
-          className="text-[11px] font-mono uppercase tracking-widest mb-3 flex items-center gap-2"
+          className="text-xs font-mono uppercase tracking-widest mb-4 flex items-center gap-2"
           style={{ color: accentColor }}
         >
-          <span className="font-serif text-base">数</span> By the Numbers
+          <span className="font-serif text-lg">数</span> By the Numbers
         </p>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4">
           <StatCard
             icon="⏱️"
             label="Hours Coded"
@@ -322,42 +322,45 @@ export function AboutSection() {
       </div>
 
       {/* ── GitHub Activity Heatmap ── */}
-      <div className="mt-10 max-w-2xl">
-        <div className="flex items-center justify-between mb-3 flex-wrap gap-2">
+      <div className="mt-8 sm:mt-10">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
           <p
-            className="text-[11px] font-mono uppercase tracking-widest flex items-center gap-2"
+            className="text-xs font-mono uppercase tracking-widest flex items-center gap-2"
             style={{ color: accentColor }}
           >
-            <span className="font-serif text-base">印</span> GitHub Activity
+            <span className="font-serif text-lg">印</span> GitHub Activity
           </p>
-          {ghData && (
-            <span
-              className="text-[10px] font-mono px-2 py-0.5 rounded-full border"
-              style={{
-                borderColor: isDark ? "rgba(122,111,163,0.4)" : "rgba(142,43,32,0.3)",
-                color: accentColor,
-                background: isDark ? "rgba(122,111,163,0.1)" : "rgba(142,43,32,0.06)",
-              }}
-            >
-              {totalContributions} contributions · last 12 months
-            </span>
-          )}
+          <div className="flex items-center gap-2">
+            <span className="sm:hidden text-[10px] font-mono opacity-50">⇄ Geser</span>
+            {ghData && (
+              <span
+                className="text-xs font-mono px-3 py-1 rounded-full border"
+                style={{
+                  borderColor: isDark ? "rgba(122,111,163,0.4)" : "rgba(142,43,32,0.3)",
+                  color: accentColor,
+                  background: isDark ? "rgba(122,111,163,0.1)" : "rgba(142,43,32,0.06)",
+                }}
+              >
+                {totalContributions} contributions · last 12 months
+              </span>
+            )}
+          </div>
         </div>
 
         <div
-          className="rounded-2xl border p-4 overflow-hidden"
+          className="rounded-2xl border p-4 sm:p-6 overflow-hidden"
           style={{ borderColor: "var(--border-color)", background: "var(--bg-card, rgba(255,255,255,0.03))" }}
         >
           {ghLoading ? (
-            <div className="flex items-center justify-center h-20 opacity-40">
-              <span className="text-xs font-mono animate-pulse">Loading activity...</span>
+            <div className="flex items-center justify-center h-24 opacity-40">
+              <span className="text-sm font-mono animate-pulse">Loading activity...</span>
             </div>
           ) : ghData ? (
             <>
               <GitHubHeatmap contributions={ghData.contributions} isDark={isDark} />
               {/* Legend */}
-              <div className="flex items-center gap-1.5 mt-3 justify-end">
-                <span className="text-[9px] font-mono opacity-40" style={{ color: "var(--text-muted)" }}>Less</span>
+              <div className="flex items-center gap-2 mt-4 justify-end">
+                <span className="text-xs font-mono opacity-40" style={{ color: "var(--text-muted)" }}>Less</span>
                 {[0, 1, 2, 3, 4].map((lvl) => {
                   const colors = isDark
                     ? ["rgba(122,111,163,0.10)", "rgba(180,160,255,0.35)", "rgba(180,160,255,0.55)", "rgba(180,160,255,0.78)", "#c8b8ff"]
@@ -365,22 +368,22 @@ export function AboutSection() {
                   return (
                     <div
                       key={lvl}
-                      className="w-[11px] h-[11px] rounded-[2px]"
+                      className="w-[16px] h-[16px] rounded-[3px]"
                       style={{ background: colors[lvl] }}
                     />
                   )
                 })}
-                <span className="text-[9px] font-mono opacity-40" style={{ color: "var(--text-muted)" }}>More</span>
+                <span className="text-xs font-mono opacity-40" style={{ color: "var(--text-muted)" }}>More</span>
               </div>
 
               {/* GitHub handle link */}
-              <div className="mt-3 pt-3 border-t flex items-center justify-between" style={{ borderColor: "var(--border-color)" }}>
-                <span className="text-[10px] font-mono opacity-50">@mahesarahdintyo</span>
+              <div className="mt-4 pt-4 border-t flex items-center justify-between" style={{ borderColor: "var(--border-color)" }}>
+                <span className="text-xs font-mono opacity-50">@mahesarahdintyo</span>
                 <a
                   href="https://github.com/mahesarahdintyo"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[10px] font-mono flex items-center gap-1 hover:underline transition-opacity opacity-60 hover:opacity-100"
+                  className="text-xs font-mono flex items-center gap-1 hover:underline transition-opacity opacity-60 hover:opacity-100"
                   style={{ color: accentColor }}
                 >
                   View on GitHub →
@@ -388,7 +391,7 @@ export function AboutSection() {
               </div>
             </>
           ) : (
-            <p className="text-xs opacity-40 text-center py-4 font-mono">Could not load activity data.</p>
+            <p className="text-sm opacity-40 text-center py-6 font-mono">Could not load activity data.</p>
           )}
         </div>
       </div>

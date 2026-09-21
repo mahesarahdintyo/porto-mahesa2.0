@@ -177,9 +177,9 @@ function ArtifactLabel({
 }) {
   return (
     <div
-      className={`mt-1 sm:mt-2 px-3.5 py-1.5 rounded-full border text-center transition-all duration-300 backdrop-blur-md ${
+      className={`mt-1 sm:mt-2 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full border text-center transition-all duration-300 backdrop-blur-md ${
         active
-          ? "scale-110 shadow-xl"
+          ? "scale-105 sm:scale-110 shadow-xl"
           : "opacity-85 scale-100 shadow-sm"
       }`}
       style={{
@@ -197,9 +197,9 @@ function ArtifactLabel({
         color: "var(--text-primary)",
       }}
     >
-      <div className="flex items-center justify-center gap-1.5 font-bold text-xs sm:text-sm">
+      <div className="flex items-center justify-center gap-1 sm:gap-1.5 font-bold text-[11px] sm:text-sm">
         <span
-          className="px-1 py-0.5 rounded text-[11px]"
+          className="px-1 py-0.5 rounded text-[10px] sm:text-[11px]"
           style={{
             background: active
               ? isDark ? "rgba(155, 143, 212, 0.25)" : "rgba(178, 58, 46, 0.15)"
@@ -212,7 +212,7 @@ function ArtifactLabel({
         </span>
         <span className="tracking-wide">{name}</span>
       </div>
-      <p className="text-[10px] opacity-60 font-mono mt-0.5">{sub}</p>
+      <p className="text-[9px] sm:text-[10px] opacity-60 font-mono mt-0.5 hidden xs:block">{sub}</p>
     </div>
   )
 }
@@ -287,11 +287,12 @@ export function ShrineCourtyard() {
   return (
     <div className="relative w-screen h-screen overflow-hidden flex flex-col justify-between select-none">
       {/* Top HUD Navigation Bar */}
-      <header className="relative z-30 px-4 sm:px-8 pt-5 pb-2 flex items-center justify-between">
+      {/* Top HUD Navigation Bar */}
+      <header className="relative z-30 px-3 sm:px-8 pt-3 sm:pt-5 pb-2 flex items-center justify-between">
         {/* Shrine Garden Crest & Profile Title */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div
-            className="px-3 py-1.5 rounded-lg border text-xs font-bold tracking-widest uppercase transition-all shadow-md backdrop-blur-md"
+            className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border text-[10px] sm:text-xs font-bold tracking-widest uppercase transition-all shadow-md backdrop-blur-md shrink-0"
             style={{
               borderColor: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
               color: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
@@ -301,9 +302,9 @@ export function ShrineCourtyard() {
           >
             花影神社
           </div>
-          <div>
+          <div className="min-w-0">
             <h1
-              className="text-sm sm:text-base font-bold tracking-wide"
+              className="text-xs sm:text-base font-bold tracking-wide truncate max-w-[120px] xs:max-w-[180px] sm:max-w-none"
               style={{ fontFamily: "var(--font-heading)", color: "var(--text-primary)" }}
             >
               {!loading && (profile?.name || "Hanakage Portfolio")}
@@ -315,11 +316,11 @@ export function ShrineCourtyard() {
         </div>
 
         {/* Right HUD Controls: Sound, Theme, Admin */}
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
           {/* Sound Toggle */}
           <button
             onClick={toggleSound}
-            className="p-2.5 rounded-full border backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95 shadow-sm"
+            className="p-2 sm:p-2.5 rounded-full border backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95 shadow-sm"
             style={{
               borderColor: "var(--border-color)",
               background: isDark ? "rgba(21, 18, 16, 0.75)" : "rgba(251, 245, 234, 0.8)",
@@ -329,16 +330,16 @@ export function ShrineCourtyard() {
             title={soundEnabled ? "Suara Kuil: Aktif" : "Suara Kuil: Hening"}
           >
             {soundEnabled ? (
-              <Volume2 className="w-4 h-4" />
+              <Volume2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
             ) : (
-              <VolumeX className="w-4 h-4 opacity-50" />
+              <VolumeX className="w-3.5 h-3.5 sm:w-4 sm:h-4 opacity-50" />
             )}
           </button>
 
           {/* Katana Slash Shoji Intro Replay Button */}
           <button
             onClick={triggerIntroReplay}
-            className="p-2.5 rounded-full border backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95 shadow-sm group cursor-pointer"
+            className="p-2 sm:p-2.5 rounded-full border backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95 shadow-sm group cursor-pointer"
             style={{
               borderColor: "var(--border-color)",
               background: isDark ? "rgba(21, 18, 16, 0.75)" : "rgba(251, 245, 234, 0.8)",
@@ -347,13 +348,13 @@ export function ShrineCourtyard() {
             aria-label="Tebas & Buka Pintu Shoji"
             title="Tebas & Buka Pintu Shoji (Intro Sinematik)"
           >
-            <Sword className="w-4 h-4 transition-transform group-hover:-rotate-45" />
+            <Sword className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:-rotate-45" />
           </button>
 
           {/* Admin CMS Portal Link */}
           <Link
             href="/admin"
-            className="p-2.5 rounded-full border backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95 shadow-sm"
+            className="p-2 sm:p-2.5 rounded-full border backdrop-blur-md transition-transform duration-200 hover:scale-110 active:scale-95 shadow-sm"
             style={{
               borderColor: "var(--border-color)",
               background: isDark ? "rgba(21, 18, 16, 0.75)" : "rgba(251, 245, 234, 0.8)",
@@ -362,7 +363,7 @@ export function ShrineCourtyard() {
             aria-label="Panel Kelola Admin"
             title="Panel Kelola Admin"
           >
-            <Shield className="w-4 h-4" />
+            <Shield className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           </Link>
 
           {/* Andon Lantern Theme Toggle */}
@@ -380,7 +381,7 @@ export function ShrineCourtyard() {
       >
         {/* Background Zen Garden concentric gravel sand pattern (枯山水 - Karesansui) */}
         <div
-          className="absolute inset-8 rounded-3xl opacity-20 pointer-events-none border border-current/10"
+          className="absolute inset-4 sm:inset-8 rounded-3xl opacity-20 pointer-events-none border border-current/10"
           style={{
             backgroundImage: `repeating-radial-gradient(circle at 50% 50%, transparent 0, transparent 24px, currentColor 24px, currentColor 26px)`,
             maskImage: "radial-gradient(ellipse 65% 55% at 50% 50%, black 40%, transparent 80%)",
@@ -395,7 +396,7 @@ export function ShrineCourtyard() {
 
         {/* 1. CENTER: Gerbang Torii (Home / 始) */}
         <div
-          className="absolute top-[38%] sm:top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center cursor-pointer group"
+          className="absolute top-[41%] sm:top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("hero")}
           onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("hero")}
@@ -435,7 +436,7 @@ export function ShrineCourtyard() {
 
         {/* 2. TOP LEFT: Kotak Omikuji (Skills / 印) */}
         <div
-          className="absolute top-[4%] sm:top-[6%] left-[4%] sm:left-[10%] z-10 flex flex-col items-center cursor-pointer group"
+          className="absolute top-[4%] sm:top-[6%] left-[3%] sm:left-[10%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("skills")}
           onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("skills")}
@@ -475,7 +476,7 @@ export function ShrineCourtyard() {
 
         {/* 3. TOP RIGHT: Pohon & Papan Ema (Projects / 卷) */}
         <div
-          className="absolute top-[4%] sm:top-[6%] right-[4%] sm:right-[10%] z-10 flex flex-col items-center cursor-pointer group"
+          className="absolute top-[4%] sm:top-[6%] right-[3%] sm:right-[10%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("projects")}
           onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("projects")}
@@ -515,7 +516,7 @@ export function ShrineCourtyard() {
 
         {/* 4. MID LEFT: Bejana Air Chōzubachi (About Me / 影) */}
         <div
-          className="absolute top-[36%] sm:top-[40%] left-[2%] sm:left-[7%] z-10 flex flex-col items-center cursor-pointer group"
+          className="absolute top-[23%] sm:top-[40%] left-[2%] sm:left-[7%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("about")}
           onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("about")}
@@ -555,7 +556,7 @@ export function ShrineCourtyard() {
 
         {/* 5. MID RIGHT: Lentera Kasuga Tōrō (Contact / 結) */}
         <div
-          className="absolute top-[36%] sm:top-[40%] right-[2%] sm:right-[7%] z-10 flex flex-col items-center cursor-pointer group"
+          className="absolute top-[59%] sm:top-[40%] right-[2%] sm:right-[7%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("contact")}
           onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("contact")}
@@ -595,7 +596,7 @@ export function ShrineCourtyard() {
 
         {/* 6. BOTTOM CENTER: Batu Pijakan Taman Zen (Experience / 歩) */}
         <div
-          className="absolute bottom-[1%] sm:bottom-[3%] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center cursor-pointer group"
+          className="absolute bottom-[1.5%] sm:bottom-[3%] left-1/2 -translate-x-1/2 z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("experience")}
           onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("experience")}
@@ -635,9 +636,9 @@ export function ShrineCourtyard() {
       </main>
 
       {/* Zen Garden Ambient Exploration Footer */}
-      <footer className="relative z-30 px-4 pb-6 flex flex-col items-center gap-2 select-none pointer-events-none">
+      <footer className="relative z-30 px-3 pb-3 sm:pb-6 flex flex-col items-center gap-2 select-none pointer-events-none">
         <div
-          className="flex items-center gap-2 text-xs tracking-widest px-4 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 pointer-events-auto shadow-md"
+          className="flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs tracking-wider sm:tracking-widest px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 pointer-events-auto shadow-md max-w-[92vw] truncate"
           style={{
             borderColor: hoveredShrine
               ? isDark
