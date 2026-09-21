@@ -727,4 +727,51 @@ html.hanakage-flicker {
   animation: hanakage-enso-rotate 12s linear infinite;
 }
 
+/* -------------------------------------------------------------------------
+   Yamazaki Shiro Oni (Gun Park) Atmosphere & Smoke Keyframes
+   ------------------------------------------------------------------------- */
+
+@keyframes hanakage-rain {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -60px 400px;
+  }
+}
+
+@keyframes hanakage-ash {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-40px) rotate(8deg);
+    opacity: 0.2;
+  }
+}
+
+@keyframes hanakage-smoke-float {
+  0% {
+    stroke-dashoffset: 180;
+    opacity: 0.1;
+    transform: scaleX(0.9) translateX(0);
+  }
+  25% {
+    opacity: 0.5;
+  }
+  60% {
+    opacity: 0.35;
+    transform: scaleX(1.1) translateX(3px);
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+    transform: scaleX(1.2) translateX(6px);
+  }
+}
+
 
