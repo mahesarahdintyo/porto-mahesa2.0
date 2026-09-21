@@ -42,20 +42,35 @@ export function playZenSound(
       gain.gain.setValueAtTime(0.18, now)
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.18)
 
-      // Add high metallic sheen
+      // Add high metallic blade sheen
       const metalOsc = ctx.createOscillator()
       const metalGain = ctx.createGain()
       metalOsc.type = "triangle"
       metalOsc.frequency.setValueAtTime(isDark ? 3200 : 4800, now)
       metalOsc.frequency.exponentialRampToValueAtTime(400, now + 0.1)
 
-      metalGain.gain.setValueAtTime(0.1, now)
+      metalGain.gain.setValueAtTime(0.12, now)
       metalGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1)
 
       metalOsc.connect(metalGain)
       metalGain.connect(ctx.destination)
       metalOsc.start(now)
       metalOsc.stop(now + 0.1)
+
+      // Sub-bass heavy punch impact (Park Jonggun UI strike impact)
+      const bassOsc = ctx.createOscillator()
+      const bassGain = ctx.createGain()
+      bassOsc.type = "sine"
+      bassOsc.frequency.setValueAtTime(120, now)
+      bassOsc.frequency.exponentialRampToValueAtTime(32, now + 0.3)
+
+      bassGain.gain.setValueAtTime(0.32, now)
+      bassGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.3)
+
+      bassOsc.connect(bassGain)
+      bassGain.connect(ctx.destination)
+      bassOsc.start(now)
+      bassOsc.stop(now + 0.3)
 
       osc.connect(gain)
       gain.connect(ctx.destination)
