@@ -17,7 +17,7 @@ export function ToriiGateArtifact({ isHovered = false, className = "" }: Artifac
     <div className={`relative flex flex-col items-center group cursor-pointer transition-transform duration-500 ${isHovered ? "scale-105" : ""} ${className}`}>
       <svg
         viewBox="0 0 200 180"
-        className="w-40 sm:w-52 md:w-60 h-auto filter drop-shadow-lg transition-all duration-300"
+        className="w-32 xs:w-40 sm:w-52 md:w-60 h-auto filter drop-shadow-lg transition-all duration-300"
       >
         <defs>
           <filter id="torii-glow-effect">
@@ -130,7 +130,7 @@ export function EmaWallArtifact({ isHovered = false, className = "" }: ArtifactP
     <div className={`relative flex flex-col items-center group cursor-pointer transition-transform duration-500 ${isHovered ? "scale-105" : ""} ${className}`}>
       <svg
         viewBox="0 0 200 180"
-        className="w-36 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
+        className="w-24 xs:w-32 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
       >
         <defs>
           <linearGradient id="ema-wood" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -233,7 +233,7 @@ export function ChozubachiArtifact({ isHovered = false, className = "" }: Artifa
     <div className={`relative flex flex-col items-center group cursor-pointer transition-transform duration-500 ${isHovered ? "scale-105" : ""} ${className}`}>
       <svg
         viewBox="0 0 200 180"
-        className="w-36 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
+        className="w-24 xs:w-32 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
       >
         <defs>
           <radialGradient id="water-ripple" cx="50%" cy="50%" r="50%">
@@ -347,7 +347,7 @@ export function OmikujiArtifact({ isHovered = false, className = "" }: ArtifactP
     <div className={`relative flex flex-col items-center group cursor-pointer transition-transform duration-500 ${isHovered ? "scale-105" : ""} ${className}`}>
       <svg
         viewBox="0 0 200 180"
-        className="w-36 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
+        className="w-24 xs:w-32 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
       >
         <defs>
           <linearGradient id="omikuji-wood" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -414,7 +414,7 @@ export function ToroLanternArtifact({ isHovered = false, className = "" }: Artif
     <div className={`relative flex flex-col items-center group cursor-pointer transition-transform duration-500 ${isHovered ? "scale-105" : ""} ${className}`}>
       <svg
         viewBox="0 0 200 180"
-        className="w-36 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
+        className="w-24 xs:w-32 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
       >
         <defs>
           <filter id="flame-glow">
@@ -536,7 +536,7 @@ export function SteppingStonesArtifact({ isHovered = false, className = "" }: Ar
     <div className={`relative flex flex-col items-center group cursor-pointer transition-transform duration-500 ${isHovered ? "scale-105" : ""} ${className}`}>
       <svg
         viewBox="0 0 200 180"
-        className="w-36 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
+        className="w-24 xs:w-32 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
       >
         <defs>
           {/* Stone gradient for natural river rock */}
