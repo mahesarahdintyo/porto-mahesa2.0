@@ -25,8 +25,8 @@ interface ShrineInfo {
 export const SHRINES: ShrineInfo[] = [
   { id: "hero", name: "Home", kanji: "始", subtitle: "序章・Hajime", artifactName: "Torii Gate" },
   { id: "about", name: "About Me", kanji: "影", subtitle: "物語・Monogatari", artifactName: "Stone Chōzubachi" },
-  { id: "experience", name: "Experience", kanji: "歩", subtitle: "歩み・Ayumi", artifactName: "Ema Board" },
-  { id: "projects", name: "Projects", kanji: "卷", subtitle: "絵巻・Emaki", artifactName: "Scroll of Works" },
+  { id: "experience", name: "Experience", kanji: "歩", subtitle: "歩み・Ayumi", artifactName: "Stepping Stones" },
+  { id: "projects", name: "Projects", kanji: "卷", subtitle: "絵巻・Emaki", artifactName: "Ema Plaque" },
   { id: "skills", name: "Skills", kanji: "印", subtitle: "印章・Inshō", artifactName: "Omikuji Box" },
   { id: "contact", name: "Contact", kanji: "結", subtitle: "結び・Tegami", artifactName: "Tōrō Lantern" },
 ]

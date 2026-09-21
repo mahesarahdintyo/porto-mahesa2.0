@@ -526,3 +526,151 @@ export function ToroLanternArtifact({ isHovered = false, className = "" }: Artif
     </div>
   )
 }
+
+/** 6. Batu Pijakan Taman Zen & Jejak Perjalanan (Experience / 歩) */
+export function SteppingStonesArtifact({ isHovered = false, className = "" }: ArtifactProps) {
+  const { theme } = useHanakageTheme()
+  const isDark = theme === "yurei"
+
+  return (
+    <div className={`relative flex flex-col items-center group cursor-pointer transition-transform duration-500 ${isHovered ? "scale-105" : ""} ${className}`}>
+      <svg
+        viewBox="0 0 200 180"
+        className="w-36 sm:w-48 md:w-56 h-auto filter drop-shadow-md"
+      >
+        <defs>
+          {/* Stone gradient for natural river rock */}
+          <radialGradient id="rock-grad-1" cx="45%" cy="40%" r="60%">
+            <stop offset="0%" stopColor={isDark ? "#38313e" : "#807b75"} />
+            <stop offset="60%" stopColor={isDark ? "#231e28" : "#56504a"} />
+            <stop offset="100%" stopColor={isDark ? "#16131a" : "#36322e"} />
+          </radialGradient>
+          <radialGradient id="rock-grad-2" cx="45%" cy="35%" r="60%">
+            <stop offset="0%" stopColor={isDark ? "#433a4a" : "#948e87"} />
+            <stop offset="70%" stopColor={isDark ? "#28222d" : "#5e5852"} />
+            <stop offset="100%" stopColor={isDark ? "#19151c" : "#3c3834"} />
+          </radialGradient>
+          <radialGradient id="rock-grad-main" cx="40%" cy="35%" r="65%">
+            <stop offset="0%" stopColor={isDark ? "#4e4257" : "#a8a29a"} />
+            <stop offset="50%" stopColor={isDark ? "#312938" : "#6e6862"} />
+            <stop offset="100%" stopColor={isDark ? "#1c1721" : "#443f3b"} />
+          </radialGradient>
+          {/* Moss gradient */}
+          <linearGradient id="moss-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor={isDark ? "#283b32" : "#607a4a"} />
+            <stop offset="100%" stopColor={isDark ? "#17241e" : "#3b4f2c"} />
+          </linearGradient>
+        </defs>
+
+        {/* Concentric Raked Sand Ripples (枯山水) around the stones */}
+        <g opacity={isDark ? "0.35" : "0.55"} stroke={isDark ? "#7a6fa3" : "#8e7b68"} strokeWidth="1" fill="none">
+          <ellipse cx="100" cy="115" rx="75" ry="38" strokeDasharray="3 3" />
+          <ellipse cx="100" cy="115" rx="88" ry="46" strokeDasharray="4 4" />
+        </g>
+
+        {/* Step 1: Small rear distant stone */}
+        <g opacity="0.85">
+          <ellipse cx="68" cy="52" rx="26" ry="14" fill="url(#rock-grad-1)" />
+          {/* Moss patch */}
+          <path d="M 50 50 Q 60 44 72 46 Q 64 53 50 50 Z" fill="url(#moss-grad)" opacity="0.8" />
+        </g>
+
+        {/* Step 2: Middle transition stone */}
+        <g opacity="0.95">
+          <ellipse cx="134" cy="74" rx="32" ry="17" fill="url(#rock-grad-2)" />
+          {/* Stone highlight ridge */}
+          <path d="M 115 70 Q 134 64 153 72" stroke={isDark ? "#584e62" : "#bcb6ae"} strokeWidth="1.5" fill="none" opacity="0.7" />
+          {/* Moss patch on side */}
+          <path d="M 145 72 Q 158 70 162 76 Q 154 82 145 72 Z" fill="url(#moss-grad)" opacity="0.85" />
+        </g>
+
+        {/* Path Guide Ripple (Glow connecting the steps) */}
+        <path
+          d="M 68 52 Q 100 62 134 74 Q 120 100 95 118"
+          stroke={isDark ? "#c8b8ff" : "#b23a2e"}
+          strokeWidth="1.5"
+          strokeDasharray="2 3"
+          fill="none"
+          opacity={isHovered ? "0.8" : "0.35"}
+          className="transition-opacity duration-300"
+        />
+
+        {/* Step 3: Main Front Stepping Stone (Sacred Polished Tobi-ishi) */}
+        <g className="transition-transform duration-300">
+          {/* Shadow beneath main rock */}
+          <ellipse cx="96" cy="128" rx="56" ry="24" fill="rgba(0,0,0,0.35)" filter="blur(3px)" />
+
+          {/* Main Stone Body */}
+          <path
+            d="M 45 118 C 42 100, 70 85, 105 86 C 142 87, 155 106, 150 125 C 145 142, 115 152, 85 148 C 60 144, 47 132, 45 118 Z"
+            fill="url(#rock-grad-main)"
+            stroke={isDark ? "#483e52" : "#78726a"}
+            strokeWidth="1.5"
+          />
+
+          {/* Smooth upper rim highlight */}
+          <path
+            d="M 58 110 C 75 96, 115 96, 138 112"
+            stroke={isDark ? "#746782" : "#d1cac0"}
+            strokeWidth="2"
+            fill="none"
+            opacity="0.6"
+          />
+
+          {/* Moss embellishment around base */}
+          <path
+            d="M 52 126 Q 64 120 74 130 Q 60 138 52 126 Z"
+            fill="url(#moss-grad)"
+            opacity="0.9"
+          />
+          <path
+            d="M 132 130 Q 142 124 146 132 Q 138 140 132 130 Z"
+            fill="url(#moss-grad)"
+            opacity="0.9"
+          />
+
+          {/* Central Vermilion/Ghost Kanji Inscription: 「歩」 (Ayumi / Steps / Experience) */}
+          <circle
+            cx="98"
+            cy="117"
+            r="17"
+            fill={isDark ? "rgba(122, 111, 163, 0.2)" : "rgba(178, 58, 46, 0.12)"}
+            className={`transition-opacity duration-300 ${isHovered ? "opacity-100 animate-pulse" : "opacity-60"}`}
+          />
+          <text
+            x="98"
+            y="124"
+            textAnchor="middle"
+            fontSize="18"
+            fontWeight="bold"
+            fontFamily="serif"
+            fill={isDark ? "#c8b8ff" : "#b23a2e"}
+            className="transition-colors duration-300"
+          >
+            歩
+          </text>
+
+          {/* Subtitle engraving on stone */}
+          <text
+            x="98"
+            y="140"
+            textAnchor="middle"
+            fontSize="7"
+            letterSpacing="2"
+            fontFamily="serif"
+            fill={isDark ? "#8f86a0" : "#5a534c"}
+            opacity="0.8"
+          >
+            歩み・経験
+          </text>
+
+          {/* Fallen Cherry Blossom Petal resting on the stone */}
+          <g transform="translate(122, 106) rotate(22)">
+            <ellipse cx="0" cy="0" rx="4.5" ry="2.5" fill={isDark ? "#a78bfa" : "#ffb7c5"} opacity="0.9" />
+          </g>
+        </g>
+      </svg>
+    </div>
+  )
+}
+
