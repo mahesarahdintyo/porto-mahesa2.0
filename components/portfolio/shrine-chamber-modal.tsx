@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react"
 import { useHanakageTheme } from "./theme-provider"
+import { usePortfolioData } from "./portfolio-data-provider"
 import { playZenSound } from "@/lib/sound"
-import { X, ChevronLeft, ChevronRight } from "lucide-react"
+import { X, ArrowUp, ExternalLink } from "lucide-react"
 import { HeroSection } from "./hero-section"
 import { AboutSection } from "./about-section"
 import { SkillsSection } from "./skills-section"
@@ -40,9 +41,15 @@ export function ShrineChamberModal({
   onSelectShrine,
 }: ShrineChamberModalProps) {
   const { theme } = useHanakageTheme()
+  const { profile } = usePortfolioData()
   const isDark = theme === "yurei"
+
   const [doorsOpen, setDoorsOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState<ShrineId>(activeShrine || "hero")
   const isClosingRef = useRef(false)
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const isManualScrollRef = useRef(false)
+  const initialScrollDoneRef = useRef(false)
 
   // Handle opening Shoji slide animation
   useEffect(() => {
@@ -57,6 +64,24 @@ export function ShrineChamberModal({
     }
   }, [activeShrine, isDark])
 
+  // Smooth scroll to initial section on entrance
+  useEffect(() => {
+    if (activeShrine) {
+      setActiveSection(activeShrine)
+      const timer = setTimeout(() => {
+        const el = document.getElementById(`shrine-section-${activeShrine}`)
+        if (el) {
+          isManualScrollRef.current = true
+          el.scrollIntoView({ behavior: "smooth", block: "start" })
+          setTimeout(() => {
+            isManualScrollRef.current = false
+          }, 800)
+        }
+      }, 300)
+      return () => clearTimeout(timer)
+    }
+  }, [activeShrine])
+
   const handleGracefulClose = () => {
     if (isClosingRef.current) return
     isClosingRef.current = true
@@ -66,6 +91,7 @@ export function ShrineChamberModal({
     setTimeout(() => {
       onClose()
       isClosingRef.current = false
+      initialScrollDoneRef.current = false
     }, 450)
   }
 
@@ -76,265 +102,405 @@ export function ShrineChamberModal({
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         handleGracefulClose()
-      } else if (e.key === "ArrowRight") {
-        const currentIdx = SHRINES.findIndex((s) => s.id === activeShrine)
-        if (currentIdx < SHRINES.length - 1) {
-          playZenSound("paper", isDark)
-          onSelectShrine(SHRINES[currentIdx + 1].id)
-        }
-      } else if (e.key === "ArrowLeft") {
-        const currentIdx = SHRINES.findIndex((s) => s.id === activeShrine)
-        if (currentIdx > 0) {
-          playZenSound("paper", isDark)
-          onSelectShrine(SHRINES[currentIdx - 1].id)
-        }
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [activeShrine, isDark, onSelectShrine])
+  }, [activeShrine, isDark])
+
+  // Scroll to section handler
+  const scrollToSection = (id: ShrineId) => {
+    setActiveSection(id)
+    onSelectShrine(id)
+    playZenSound("paper", isDark)
+    const element = document.getElementById(`shrine-section-${id}`)
+    if (element) {
+      isManualScrollRef.current = true
+      element.scrollIntoView({ behavior: "smooth", block: "start" })
+      setTimeout(() => {
+        isManualScrollRef.current = false
+      }, 800)
+    }
+  }
+
+  // ScrollSpy: observe scroll position inside container
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    if (isManualScrollRef.current) return
+    const container = e.currentTarget
+    const scrollPos = container.scrollTop + 220
+
+    for (let i = SHRINES.length - 1; i >= 0; i--) {
+      const shrine = SHRINES[i]
+      const el = document.getElementById(`shrine-section-${shrine.id}`)
+      if (el) {
+        if (el.offsetTop <= scrollPos) {
+          if (activeSection !== shrine.id) {
+            setActiveSection(shrine.id)
+          }
+          break
+        }
+      }
+    }
+  }
 
   if (!activeShrine) return null
 
-  const currentShrine = SHRINES.find((s) => s.id === activeShrine) || SHRINES[0]
-  const currentIdx = SHRINES.findIndex((s) => s.id === activeShrine)
-
-  const handleNext = () => {
-    if (currentIdx < SHRINES.length - 1) {
-      playZenSound("paper", isDark)
-      onSelectShrine(SHRINES[currentIdx + 1].id)
-    }
-  }
-
-  const handlePrev = () => {
-    if (currentIdx > 0) {
-      playZenSound("paper", isDark)
-      onSelectShrine(SHRINES[currentIdx - 1].id)
-    }
-  }
+  const currentIdx = SHRINES.findIndex((s) => s.id === activeSection)
 
   return (
     <div
       role="dialog"
       aria-modal="true"
-      aria-label={`Ruang Kuil: ${currentShrine.name}`}
-      className="fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden transition-opacity duration-300"
+      aria-label="Balairung Kuil Hanakage"
+      className="fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden transition-opacity duration-300 select-none"
       style={{
-        background: isDark ? "#0a0908" : "#f5efe6",
+        background: "var(--bg-base)",
       }}
     >
-      {/* Scroll Chamber - Fullscreen Layout */}
+      {/* Sliding Shoji Panels across the entire viewport */}
       <div
-        className="relative w-full h-full flex flex-col overflow-hidden transition-all duration-300"
-        style={{
-          background: "var(--card-bg)",
-        }}
-        onClick={(e) => e.stopPropagation()}
+        className="absolute inset-0 pointer-events-none z-40 flex overflow-hidden"
+        aria-hidden="true"
       >
-        {/* Sliding Shoji Panels inside Chamber Window */}
+        {/* Left Shoji Panel */}
         <div
-          className="absolute inset-0 pointer-events-none z-30 flex overflow-hidden"
-          aria-hidden="true"
+          className="w-1/2 h-full transition-transform duration-500 ease-in-out border-r"
+          style={{
+            transform: doorsOpen ? "translateX(-100%)" : "translateX(0)",
+            background: isDark ? "#17131e" : "#fdf6ec",
+            borderColor: isDark ? "#3c324c" : "#8e2b20",
+            boxShadow: "10px 0 35px rgba(0,0,0,0.5)",
+          }}
         >
-          {/* Left Shoji Panel */}
           <div
-            className="w-1/2 h-full transition-transform duration-500 ease-in-out border-r"
+            className="w-full h-full opacity-25"
             style={{
-              transform: doorsOpen ? "translateX(-100%)" : "translateX(0)",
-              background: isDark ? "#17131e" : "#fdf6ec",
-              borderColor: isDark ? "#3c324c" : "#8e2b20",
-              boxShadow: "5px 0 25px rgba(0,0,0,0.4)",
+              backgroundImage: isDark
+                ? `linear-gradient(to right, rgba(122,111,163,0.4) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(122,111,163,0.4) 1px, transparent 1px)`
+                : `linear-gradient(to right, rgba(142,43,32,0.3) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(142,43,32,0.3) 1px, transparent 1px)`,
+              backgroundSize: "36px 36px",
             }}
-          >
-            <div
-              className="w-full h-full opacity-30"
-              style={{
-                backgroundImage: isDark
-                  ? `linear-gradient(to right, rgba(122,111,163,0.4) 1px, transparent 1px),
-                     linear-gradient(to bottom, rgba(122,111,163,0.4) 1px, transparent 1px)`
-                  : `linear-gradient(to right, rgba(142,43,32,0.3) 1px, transparent 1px),
-                     linear-gradient(to bottom, rgba(142,43,32,0.3) 1px, transparent 1px)`,
-                backgroundSize: "36px 36px",
-              }}
-            />
-          </div>
-
-          {/* Right Shoji Panel */}
-          <div
-            className="w-1/2 h-full transition-transform duration-500 ease-in-out border-l"
-            style={{
-              transform: doorsOpen ? "translateX(100%)" : "translateX(0)",
-              background: isDark ? "#17131e" : "#fdf6ec",
-              borderColor: isDark ? "#3c324c" : "#8e2b20",
-              boxShadow: "-5px 0 25px rgba(0,0,0,0.4)",
-            }}
-          >
-            <div
-              className="w-full h-full opacity-30"
-              style={{
-                backgroundImage: isDark
-                  ? `linear-gradient(to right, rgba(122,111,163,0.4) 1px, transparent 1px),
-                     linear-gradient(to bottom, rgba(122,111,163,0.4) 1px, transparent 1px)`
-                  : `linear-gradient(to right, rgba(142,43,32,0.3) 1px, transparent 1px),
-                     linear-gradient(to bottom, rgba(142,43,32,0.3) 1px, transparent 1px)`,
-                backgroundSize: "36px 36px",
-              }}
-            />
-          </div>
+          />
         </div>
 
-        {/* Top Header Rail */}
+        {/* Right Shoji Panel */}
         <div
-          className="relative z-20 flex items-center justify-between px-4 sm:px-8 md:px-12 py-3.5 sm:py-4 border-b select-none backdrop-blur-md shrink-0"
-          style={{ borderColor: "var(--border-color)", background: "var(--card-bg)" }}
+          className="w-1/2 h-full transition-transform duration-500 ease-in-out border-l"
+          style={{
+            transform: doorsOpen ? "translateX(100%)" : "translateX(0)",
+            background: isDark ? "#17131e" : "#fdf6ec",
+            borderColor: isDark ? "#3c324c" : "#8e2b20",
+            boxShadow: "-10px 0 35px rgba(0,0,0,0.5)",
+          }}
         >
-          {/* Shrine Title & Kanji Badge */}
-          <div className="flex items-center gap-3">
-            <span
-              className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xl border transition-colors shadow-sm"
+          <div
+            className="w-full h-full opacity-25"
+            style={{
+              backgroundImage: isDark
+                ? `linear-gradient(to right, rgba(122,111,163,0.4) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(122,111,163,0.4) 1px, transparent 1px)`
+                : `linear-gradient(to right, rgba(142,43,32,0.3) 1px, transparent 1px),
+                   linear-gradient(to bottom, rgba(142,43,32,0.3) 1px, transparent 1px)`,
+              backgroundSize: "36px 36px",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Main Split Layout: Fixed Sticky Left Navigation + Continuous Scrollable Right Content */}
+      <div className="relative z-10 w-full h-full flex flex-col md:flex-row overflow-hidden">
+        {/* ========================================================
+            1. DESKTOP STICKY ZEN SIDEBAR (Left Panel)
+            ======================================================== */}
+        <aside
+          className="hidden md:flex flex-col justify-between w-72 lg:w-80 border-r shrink-0 p-6 select-none backdrop-blur-md"
+          style={{
+            borderColor: "var(--border-color)",
+            background: isDark ? "rgba(18, 16, 14, 0.95)" : "rgba(251, 245, 234, 0.95)",
+          }}
+        >
+          {/* Top Brand / Profile Card */}
+          <div className="space-y-3">
+            <div
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-mono uppercase tracking-widest"
               style={{
-                fontFamily: "var(--font-heading)",
                 borderColor: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
                 color: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
-                background: isDark ? "rgba(122, 111, 163, 0.15)" : "rgba(178, 58, 46, 0.08)",
+                background: isDark ? "rgba(122, 111, 163, 0.12)" : "rgba(178, 58, 46, 0.08)",
               }}
             >
-              {currentShrine.kanji}
-            </span>
+              <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
+              <span>花影神社 ・ 本殿</span>
+            </div>
+
             <div>
-              <div className="flex items-center gap-2">
-                <h2
-                  className="text-lg sm:text-xl font-bold leading-tight"
-                  style={{ fontFamily: "var(--font-heading)", color: "var(--text-primary)" }}
-                >
-                  {currentShrine.name}
-                </h2>
-                <span
-                  className="px-2 py-0.5 rounded text-[10px] font-mono border opacity-75 hidden sm:inline-block"
-                  style={{ borderColor: "var(--border-color)" }}
-                >
-                  {currentShrine.artifactName}
-                </span>
-              </div>
-              <p className="text-xs opacity-60 font-mono tracking-wider mt-0.5" style={{ color: "var(--text-muted)" }}>
-                {currentShrine.subtitle}
+              <h2
+                className="text-2xl font-black uppercase tracking-tight font-serif"
+                style={{ color: "var(--text-primary)" }}
+              >
+                {profile?.name || "Mahesa"}
+              </h2>
+              <p className="text-xs opacity-60 font-mono mt-0.5" style={{ color: "var(--text-muted)" }}>
+                {profile?.title || "Perancang & Pengembang Antarmuka"}
               </p>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5 pt-1">
+              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded border border-current/20 opacity-70">
+                UI/UX Designer
+              </span>
+              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded border border-current/20 opacity-70">
+                Web Developer
+              </span>
             </div>
           </div>
 
-          {/* Controls: Prev/Next arrow + Hanko Seal Return Button */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              onClick={handlePrev}
-              disabled={currentIdx === 0}
-              className="p-2 sm:px-3 sm:py-2 rounded-lg border transition-all disabled:opacity-20 hover:scale-105 active:scale-95 flex items-center gap-1 text-xs"
-              style={{ borderColor: "var(--border-color)", color: "var(--text-primary)" }}
-              title="Kuil Sebelumnya (←)"
-            >
-              <ChevronLeft className="w-4 h-4" />
-              <span className="hidden md:inline">Sebelumnya</span>
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={currentIdx === SHRINES.length - 1}
-              className="p-2 sm:px-3 sm:py-2 rounded-lg border transition-all disabled:opacity-20 hover:scale-105 active:scale-95 flex items-center gap-1 text-xs"
-              style={{ borderColor: "var(--border-color)", color: "var(--text-primary)" }}
-              title="Kuil Selanjutnya (→)"
-            >
-              <span className="hidden md:inline">Selanjutnya</span>
-              <ChevronRight className="w-4 h-4" />
-            </button>
+          {/* Center Navigation List with ScrollSpy */}
+          <div className="my-auto py-6 space-y-2">
+            <div className="text-[10px] font-mono uppercase tracking-widest opacity-50 px-2 mb-2 flex items-center justify-between">
+              <span>NAVIGASI KUIL</span>
+              <span>▼</span>
+            </div>
 
-            {/* Traditional Hanko Seal "戻" (Return) Close Button */}
+            <nav className="space-y-1.5">
+              {SHRINES.map((s, idx) => {
+                const isActive = activeSection === s.id
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => scrollToSection(s.id)}
+                    className={`w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                      isActive
+                        ? "shadow-md scale-[1.02]"
+                        : "opacity-65 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 border-transparent"
+                    }`}
+                    style={{
+                      borderColor: isActive
+                        ? isDark
+                          ? "var(--accent-ghost, #7a6fa3)"
+                          : "var(--accent-seal)"
+                        : "transparent",
+                      background: isActive
+                        ? isDark
+                          ? "rgba(122, 111, 163, 0.2)"
+                          : "rgba(178, 58, 46, 0.12)"
+                        : "transparent",
+                      color: "var(--text-primary)",
+                    }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span className="font-mono text-xs opacity-50">
+                        0{idx + 1}
+                      </span>
+                      <span
+                        className="w-6 h-6 rounded-md flex items-center justify-center font-bold text-xs border font-serif"
+                        style={{
+                          borderColor: isActive
+                            ? isDark
+                              ? "var(--accent-ghost, #7a6fa3)"
+                              : "var(--accent-seal)"
+                            : "var(--border-color)",
+                          color: isActive
+                            ? isDark
+                              ? "var(--accent-ghost, #c8b8ff)"
+                              : "var(--accent-seal)"
+                            : "var(--text-muted)",
+                        }}
+                      >
+                        {s.kanji}
+                      </span>
+                      <div>
+                        <div className="text-xs font-bold tracking-wide">
+                          {s.name}
+                        </div>
+                        <p className="text-[10px] font-mono opacity-50 line-clamp-1">
+                          {s.artifactName}
+                        </p>
+                      </div>
+                    </div>
+
+                    {isActive && (
+                      <span
+                        className="w-1.5 h-1.5 rounded-full"
+                        style={{
+                          background: isDark
+                            ? "var(--accent-ghost, #c8b8ff)"
+                            : "var(--accent-seal)",
+                        }}
+                      />
+                    )}
+                  </button>
+                )
+              })}
+            </nav>
+          </div>
+
+          {/* Bottom Footer Section: Section Indicator & Return Button */}
+          <div className="space-y-4 pt-4 border-t" style={{ borderColor: "var(--border-color)" }}>
+            <div className="flex items-center justify-between text-xs font-mono opacity-60 px-1">
+              <span>BAGIAN</span>
+              <span className="font-bold">
+                0{currentIdx + 1} / 05
+              </span>
+            </div>
+
             <button
               onClick={handleGracefulClose}
-              className="group flex items-center gap-2 px-3.5 py-2 rounded-xl border transition-all duration-200 hover:scale-105 active:scale-95 shadow-md cursor-pointer ml-1 sm:ml-2"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-xs font-bold tracking-wider uppercase transition-all duration-200 hover:scale-105 active:scale-95 shadow-md cursor-pointer"
               style={{
                 borderColor: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
                 background: isDark ? "rgba(122, 111, 163, 0.18)" : "rgba(178, 58, 46, 0.12)",
-                color: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
+                color: isDark ? "var(--accent-ghost, #c8b8ff)" : "var(--accent-seal)",
               }}
-              aria-label="Kembali ke Halaman Kuil (Tutup)"
-              title="Kembali ke Halaman Kuil (ESC)"
+              title="Kembali ke Taman Kuil Luar (ESC)"
             >
-              <span className="font-bold text-base" style={{ fontFamily: "var(--font-heading)" }}>
-                戻
-              </span>
-              <span className="text-xs sm:text-sm font-semibold tracking-wider">Kembali</span>
-              <X className="w-4 h-4 opacity-70 group-hover:opacity-100" />
+              <span className="font-serif font-bold text-sm">戻</span>
+              <span>Kembali ke Taman (ESC)</span>
             </button>
           </div>
-        </div>
+        </aside>
 
-        {/* Chamber Content Scrollable Area */}
-        <div className="relative z-10 flex-1 overflow-y-auto px-4 sm:px-8 md:px-16 lg:px-24 py-8 sm:py-12 emaki-scrollable [&_.hanakage-section]:py-4 [&_.hanakage-section]:sm:py-8 [&_.hanakage-section]:px-0 [&_.hanakage-section]:max-w-none">
-          <div className="max-w-5xl xl:max-w-6xl mx-auto w-full">
-            {activeShrine === "hero" && (
-              <HeroSection
-                onNavigate={(s) => onSelectShrine(s === "projects" ? "projects" : "contact")}
-              />
-            )}
-            {activeShrine === "about" && <AboutSection />}
-            {activeShrine === "skills" && <SkillsSection />}
-            {activeShrine === "projects" && <ProjectsSection />}
-            {activeShrine === "contact" && <ContactSection />}
-          </div>
-        </div>
-
-        {/* Bottom footer bar with shrine shortcut tabs */}
+        {/* ========================================================
+            2. MOBILE STICKY TOP NAVIGATION BAR
+            ======================================================== */}
         <div
-          className="relative z-20 px-4 sm:px-8 md:px-12 py-3 border-t flex items-center justify-between text-xs select-none bg-black/5 dark:bg-white/5 backdrop-blur-md shrink-0"
-          style={{ borderColor: "var(--border-color)", color: "var(--text-muted)" }}
+          className="md:hidden sticky top-0 z-30 px-4 py-2.5 border-b flex items-center justify-between backdrop-blur-md shrink-0"
+          style={{ borderColor: "var(--border-color)", background: "var(--card-bg)" }}
         >
-          <div className="flex items-center gap-2 overflow-x-auto py-1">
+          <div className="flex items-center gap-2">
+            <span
+              className="w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs border font-serif"
+              style={{
+                borderColor: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
+                color: isDark ? "var(--accent-ghost, #c8b8ff)" : "var(--accent-seal)",
+              }}
+            >
+              {SHRINES.find((s) => s.id === activeSection)?.kanji || "始"}
+            </span>
+            <span className="font-bold text-sm">
+              {SHRINES.find((s) => s.id === activeSection)?.name || "Beranda"}
+            </span>
+          </div>
+
+          {/* Quick horizontal scrollable tabs */}
+          <div className="flex items-center gap-1 overflow-x-auto max-w-[50%] py-1">
             {SHRINES.map((s) => (
               <button
                 key={s.id}
-                onClick={() => {
-                  playZenSound("paper", isDark)
-                  onSelectShrine(s.id)
-                }}
-                className={`px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-xs whitespace-nowrap cursor-pointer ${
-                  s.id === activeShrine
-                    ? "font-bold shadow-sm scale-105"
+                onClick={() => scrollToSection(s.id)}
+                className={`px-2 py-1 rounded text-xs font-serif transition-colors cursor-pointer ${
+                  activeSection === s.id
+                    ? "font-bold underline text-amber-500"
                     : "opacity-60 hover:opacity-100"
                 }`}
-                style={{
-                  background:
-                    s.id === activeShrine
-                      ? isDark
-                        ? "rgba(122, 111, 163, 0.25)"
-                        : "rgba(178, 58, 46, 0.15)"
-                      : "transparent",
-                  color:
-                    s.id === activeShrine
-                      ? isDark
-                        ? "var(--accent-ghost, #7a6fa3)"
-                        : "var(--accent-seal)"
-                      : "var(--text-primary)",
-                  border:
-                    s.id === activeShrine
-                      ? `1px solid ${isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)"}`
-                      : "1px solid transparent",
-                }}
               >
-                <span className="font-bold">{s.kanji}</span>
-                <span>{s.name}</span>
+                {s.kanji}
               </button>
             ))}
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="hidden sm:inline opacity-60 text-xs font-mono">
-              Gunakan ← → untuk navigasi antar kuil
-            </span>
-            <button
-              onClick={handleGracefulClose}
-              className="text-xs hover:underline opacity-70 hover:opacity-100 flex items-center gap-1 cursor-pointer font-mono"
+          <button
+            onClick={handleGracefulClose}
+            className="p-2 rounded-lg border text-xs font-bold transition-transform active:scale-95 cursor-pointer"
+            style={{ borderColor: "var(--border-color)", color: "var(--text-primary)" }}
+            aria-label="Tutup"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* ========================================================
+            3. MAIN CONTINUOUS SCROLLABLE CONTENT (Right Panel)
+            ======================================================== */}
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="flex-1 h-full overflow-y-auto emaki-scrollable scroll-smooth select-text"
+        >
+          <div className="max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-8 md:px-12 py-10 md:py-16 space-y-20 sm:space-y-28">
+            {/* 1. HERO SECTION (01 壱・始) */}
+            <section id="shrine-section-hero" className="scroll-mt-8">
+              <HeroSection onNavigate={(s) => scrollToSection(s)} />
+            </section>
+
+            {/* Sacred Divider: 1 -> 2 */}
+            <div className="flex items-center justify-center gap-4 opacity-40 select-none">
+              <span className="h-px flex-1 bg-current" />
+              <span className="font-serif text-xs tracking-widest">壱・始 ➔ 弐・影</span>
+              <span className="h-px flex-1 bg-current" />
+            </div>
+
+            {/* 2. ABOUT SECTION (02 弐・影) */}
+            <section id="shrine-section-about" className="scroll-mt-8">
+              <AboutSection />
+            </section>
+
+            {/* Sacred Divider: 2 -> 3 */}
+            <div className="flex items-center justify-center gap-4 opacity-40 select-none">
+              <span className="h-px flex-1 bg-current" />
+              <span className="font-serif text-xs tracking-widest">弐・影 ➔ 参・印</span>
+              <span className="h-px flex-1 bg-current" />
+            </div>
+
+            {/* 3. SKILLS SECTION (03 参・印) */}
+            <section id="shrine-section-skills" className="scroll-mt-8">
+              <SkillsSection />
+            </section>
+
+            {/* Sacred Divider: 3 -> 4 */}
+            <div className="flex items-center justify-center gap-4 opacity-40 select-none">
+              <span className="h-px flex-1 bg-current" />
+              <span className="font-serif text-xs tracking-widest">参・印 ➔ 四・卷</span>
+              <span className="h-px flex-1 bg-current" />
+            </div>
+
+            {/* 4. PROJECTS SECTION (04 四・卷) */}
+            <section id="shrine-section-projects" className="scroll-mt-8">
+              <ProjectsSection />
+            </section>
+
+            {/* Sacred Divider: 4 -> 5 */}
+            <div className="flex items-center justify-center gap-4 opacity-40 select-none">
+              <span className="h-px flex-1 bg-current" />
+              <span className="font-serif text-xs tracking-widest">四・卷 ➔ 五・結</span>
+              <span className="h-px flex-1 bg-current" />
+            </div>
+
+            {/* 5. CONTACT SECTION (05 五・結) */}
+            <section id="shrine-section-contact" className="scroll-mt-8 pb-16">
+              <ContactSection />
+            </section>
+
+            {/* Chamber Bottom Footer */}
+            <div
+              className="pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-xs opacity-60 font-mono select-none"
+              style={{ borderColor: "var(--border-color)" }}
             >
-              <span>[ESC] Tutup</span>
-            </button>
+              <p>© 2026 {profile?.name || "Mahesa Rahdintyo"} — 花影神社</p>
+
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => scrollToSection("hero")}
+                  className="hover:underline hover:opacity-100 cursor-pointer flex items-center gap-1"
+                >
+                  <ArrowUp className="w-3.5 h-3.5" />
+                  <span>Kembali ke Puncak Kuil</span>
+                </button>
+                <span>・</span>
+                <button
+                  onClick={handleGracefulClose}
+                  className="hover:underline hover:opacity-100 cursor-pointer font-bold"
+                  style={{
+                    color: isDark ? "var(--accent-ghost, #c8b8ff)" : "var(--accent-seal)",
+                  }}
+                >
+                  Keluar ke Taman Kuil ⛩️
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
