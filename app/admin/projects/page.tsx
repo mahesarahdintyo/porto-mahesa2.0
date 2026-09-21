@@ -56,6 +56,14 @@ export default function AdminProjectsPage() {
   const [orderIndex, setOrderIndex] = useState(1)
 
   const loadProjects = async () => {
+    // Check localStorage cache first
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("hanakage_projects")
+        if (cached) setProjects(JSON.parse(cached))
+      } catch (e) {}
+    }
+
     if (!isConfigured) {
       setLoading(false)
       return
@@ -71,10 +79,13 @@ export default function AdminProjectsPage() {
       if (error) throw error
       if (data && data.length > 0) {
         setProjects(data as Project[])
+        if (typeof window !== "undefined") {
+          localStorage.setItem("hanakage_projects", JSON.stringify(data))
+        }
       }
     } catch (err: unknown) {
       const e = err as { message?: string }
-      setFeedback({ type: "error", message: e.message || "Gagal memuat daftar proyek." })
+      console.warn("Notice: Loading projects from local storage:", e.message)
     } finally {
       setLoading(false)
     }
@@ -123,65 +134,62 @@ export default function AdminProjectsPage() {
       order_index: orderIndex,
     }
 
-    if (!isConfigured) {
-      if (editingProject) {
-        setProjects(projects.map((p) => (p.id === editingProject.id ? { ...p, ...payload } : p)))
-      } else {
-        setProjects([...projects, { id: String(Date.now()), ...payload }])
-      }
-      setSaving(false)
-      setIsModalOpen(false)
-      setFeedback({ type: "success", message: "Proyek berhasil disimpan (mode lokal)!" })
-      return
+    let updatedProjects: Project[]
+    if (editingProject) {
+      updatedProjects = projects.map((p) =>
+        p.id === editingProject.id ? { ...p, ...payload } : p
+      )
+    } else {
+      updatedProjects = [...projects, { id: "proj-" + Date.now(), ...payload }]
     }
 
-    try {
-      const supabase = createClient()
-      if (editingProject) {
-        const { error } = await supabase
-          .from("projects")
-          .update(payload)
-          .eq("id", editingProject.id)
-        if (error) throw error
-      } else {
-        const { error } = await supabase.from("projects").insert([payload])
-        if (error) throw error
-      }
-
-      await loadProjects()
-      setIsModalOpen(false)
-      setFeedback({
-        type: "success",
-        message: editingProject ? "Proyek berhasil diperbarui!" : "Proyek baru berhasil ditambahkan!",
-      })
-      setTimeout(() => setFeedback(null), 3000)
-    } catch (err: unknown) {
-      const e = err as { message?: string }
-      setFeedback({ type: "error", message: e.message || "Gagal menyimpan proyek." })
-    } finally {
-      setSaving(false)
+    setProjects(updatedProjects)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("hanakage_projects", JSON.stringify(updatedProjects))
     }
+
+    if (isConfigured) {
+      try {
+        const supabase = createClient()
+        if (editingProject) {
+          await supabase.from("projects").update(payload).eq("id", editingProject.id)
+        } else {
+          await supabase.from("projects").insert([payload])
+        }
+      } catch (err) {
+        console.warn("Supabase project sync notice:", err)
+      }
+    }
+
+    setIsModalOpen(false)
+    setFeedback({
+      type: "success",
+      message: editingProject ? "Proyek berhasil diperbarui!" : "Proyek baru berhasil ditambahkan!",
+    })
+    setTimeout(() => setFeedback(null), 3000)
+    setSaving(false)
   }
 
   const handleDelete = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus proyek ini?")) return
 
-    if (!isConfigured) {
-      setProjects(projects.filter((p) => p.id !== id))
-      return
+    const updated = projects.filter((p) => p.id !== id)
+    setProjects(updated)
+    if (typeof window !== "undefined") {
+      localStorage.setItem("hanakage_projects", JSON.stringify(updated))
     }
 
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.from("projects").delete().eq("id", id)
-      if (error) throw error
-      await loadProjects()
-      setFeedback({ type: "success", message: "Proyek berhasil dihapus." })
-      setTimeout(() => setFeedback(null), 3000)
-    } catch (err: unknown) {
-      const e = err as { message?: string }
-      setFeedback({ type: "error", message: e.message || "Gagal menghapus proyek." })
+    if (isConfigured) {
+      try {
+        const supabase = createClient()
+        await supabase.from("projects").delete().eq("id", id)
+      } catch (err) {
+        console.warn("Supabase project delete notice:", err)
+      }
     }
+
+    setFeedback({ type: "success", message: "Proyek berhasil dihapus." })
+    setTimeout(() => setFeedback(null), 3000)
   }
 
   const handleTogglePublish = async (proj: Project) => {

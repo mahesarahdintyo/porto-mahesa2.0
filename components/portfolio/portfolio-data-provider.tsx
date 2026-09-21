@@ -33,6 +33,30 @@ export function PortfolioDataProvider({ children }: { children: React.ReactNode 
   const configured = isSupabaseConfigured()
 
   const fetchData = async () => {
+    // Check localStorage for offline/immediate edits
+    let localProfile: Profile | null = null
+    let localAbout: About | null = null
+    let localSkills: Skill[] | null = null
+    let localProjects: Project[] | null = null
+
+    if (typeof window !== "undefined") {
+      try {
+        const p = localStorage.getItem("hanakage_profile")
+        if (p) localProfile = JSON.parse(p)
+        const a = localStorage.getItem("hanakage_about")
+        if (a) localAbout = JSON.parse(a)
+        const s = localStorage.getItem("hanakage_skills")
+        if (s) localSkills = JSON.parse(s)
+        const pr = localStorage.getItem("hanakage_projects")
+        if (pr) localProjects = JSON.parse(pr)
+      } catch (e) {}
+    }
+
+    if (localProfile) setProfile(localProfile)
+    if (localAbout) setAbout(localAbout)
+    if (localSkills) setSkills(localSkills)
+    if (localProjects) setProjects(localProjects)
+
     if (!configured) {
       setLoading(false)
       return
@@ -52,10 +76,10 @@ export function PortfolioDataProvider({ children }: { children: React.ReactNode 
           .order("order_index", { ascending: true }),
       ])
 
-      if (profileRes.data) setProfile(profileRes.data as Profile)
-      if (aboutRes.data) setAbout(aboutRes.data as About)
-      if (skillsRes.data) setSkills(skillsRes.data as Skill[])
-      if (projectsRes.data) setProjects(projectsRes.data as Project[])
+      if (profileRes.data && !localProfile) setProfile(profileRes.data as Profile)
+      if (aboutRes.data && !localAbout) setAbout(aboutRes.data as About)
+      if (skillsRes.data && skillsRes.data.length > 0 && !localSkills) setSkills(skillsRes.data as Skill[])
+      if (projectsRes.data && projectsRes.data.length > 0 && !localProjects) setProjects(projectsRes.data as Project[])
     } catch (err) {
       console.warn("Could not fetch data from Supabase:", err)
     } finally {

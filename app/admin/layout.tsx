@@ -56,6 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
       } catch (err) {
         console.error("Auth check failed:", err)
+        router.push("/admin/login")
       } finally {
         setLoading(false)
       }
@@ -69,6 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       const supabase = createClient()
       await supabase.auth.signOut()
     }
+    setUserEmail(null)
     router.push("/admin/login")
   }
 
@@ -157,14 +159,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
 
           {userEmail && (
-            <div className="px-2 text-[11px] font-mono text-zinc-400 truncate">
+            <div className="px-2 text-[11px] font-mono text-emerald-400 truncate flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
               {userEmail}
             </div>
           )}
 
           <button
             onClick={handleLogout}
-            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-mono text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+            className="w-full flex items-center gap-2 px-3 py-2 text-xs font-mono text-zinc-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
           >
             <LogOut className="w-3.5 h-3.5" />
             Keluar (Logout)
