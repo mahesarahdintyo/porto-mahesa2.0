@@ -695,3 +695,56 @@ html.hanakage-flicker {
   animation: hanakage-shoji-seal-pulse 2s ease-in-out infinite;
 }
 
+/* -------------------------------------------------------------------------
+   Celestial Constellation (Seishuku 星宿) & Sumi-e Brush Aura
+   ------------------------------------------------------------------------- */
+
+@keyframes hanakage-star-twinkle {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(0.85);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.35);
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+}
+
+.hanakage-star-twinkle {
+  animation: hanakage-star-twinkle 2.4s ease-in-out infinite;
+}
+
+@keyframes hanakage-constellation-dash {
+  0% {
+    stroke-dashoffset: 60;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.hanakage-constellation-line {
+  animation: hanakage-constellation-dash 3s linear infinite;
+}
+
+@keyframes hanakage-enso-rotate {
+  0% {
+    transform: rotate(0deg) scale(0.95);
+    opacity: 0.55;
+  }
+  50% {
+    transform: rotate(180deg) scale(1.05);
+    opacity: 0.85;
+  }
+  100% {
+    transform: rotate(360deg) scale(0.95);
+    opacity: 0.55;
+  }
+}
+
+.hanakage-sumi-enso {
+  animation: hanakage-enso-rotate 12s linear infinite;
+}
+
+

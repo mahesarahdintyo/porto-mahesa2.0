@@ -23,7 +23,7 @@ function getAudioContext(): AudioContext | null {
  * using Web Audio API without external audio files.
  */
 export function playZenSound(
-  type: "chime" | "wood" | "water" | "gong" | "paper" | "slash" | "shoji" = "chime",
+  type: "chime" | "wood" | "water" | "gong" | "paper" | "slash" | "shoji" | "bamboo" | "flame" = "chime",
   isDark = false,
 ) {
   try {
@@ -118,19 +118,39 @@ export function playZenSound(
       return
     }
 
-    if (type === "paper" || type === "gong") {
-      // Deep temple bell gong
+    if (type === "bamboo") {
+      // Omikuji canister bamboo sticks shaking / hollow wood clack
       const osc = ctx.createOscillator()
       const gain = ctx.createGain()
       osc.type = "sine"
-      osc.frequency.setValueAtTime(isDark ? 110 : 220, now) // A2 or A3
-      gain.gain.setValueAtTime(0.15, now)
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.0)
+      osc.frequency.setValueAtTime(isDark ? 520 : 780, now)
+      osc.frequency.exponentialRampToValueAtTime(140, now + 0.09)
+
+      gain.gain.setValueAtTime(0.09, now)
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09)
 
       osc.connect(gain)
       gain.connect(ctx.destination)
       osc.start(now)
-      osc.stop(now + 2.0)
+      osc.stop(now + 0.09)
+      return
+    }
+
+    if (type === "flame") {
+      // Toro stone lantern warm ember resonance & soft sacred hum
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = "triangle"
+      osc.frequency.setValueAtTime(isDark ? 164.81 : 220, now) // E3 or A3
+      osc.frequency.linearRampToValueAtTime(isDark ? 160 : 216, now + 0.5)
+
+      gain.gain.setValueAtTime(0.07, now)
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5)
+
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start(now)
+      osc.stop(now + 0.5)
       return
     }
 

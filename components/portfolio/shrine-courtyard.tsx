@@ -14,9 +14,169 @@ import {
   ToroLanternArtifact,
 } from "./shrine-artifacts"
 import { ShrineChamberModal, ShrineId, SHRINES } from "./shrine-chamber-modal"
-import { Volume2, VolumeX, Shield, Sparkles, Compass, Sword } from "lucide-react"
-import { SensuFanNav } from "./sensu-fan-nav"
+import { Volume2, VolumeX, Shield, Sparkles, Sword } from "lucide-react"
 import { ShojiIntro } from "./shoji-intro"
+
+/** CelestialConstellation: Japanese mystical star map (Seishuku 星宿) connecting sacred shrines */
+function CelestialConstellation({
+  hoveredShrine,
+  isDark,
+}: {
+  hoveredShrine: ShrineId | null
+  isDark: boolean
+}) {
+  const activeColor = isDark ? "#c8b8ff" : "#b23a2e"
+  const starGlow = isDark ? "rgba(200, 184, 255, 0.9)" : "rgba(178, 58, 46, 0.9)"
+
+  const constellations = [
+    {
+      id: "skills" as ShrineId,
+      // Torii (500, 270) -> Omikuji (190, 120)
+      d: "M 480,250 Q 330,200 190,120",
+      stars: [
+        { cx: 395, cy: 215, delay: "0s" },
+        { cx: 310, cy: 175, delay: "0.6s" },
+        { cx: 235, cy: 140, delay: "1.2s" },
+      ],
+      targetStar: { cx: 190, cy: 120 },
+    },
+    {
+      id: "projects" as ShrineId,
+      // Torii (500, 270) -> Ema (810, 120)
+      d: "M 520,250 Q 670,200 810,120",
+      stars: [
+        { cx: 605, cy: 215, delay: "0.2s" },
+        { cx: 690, cy: 175, delay: "0.8s" },
+        { cx: 765, cy: 140, delay: "1.4s" },
+      ],
+      targetStar: { cx: 810, cy: 120 },
+    },
+    {
+      id: "about" as ShrineId,
+      // Torii (500, 270) -> Chozubachi (190, 470)
+      d: "M 480,290 Q 330,370 190,470",
+      stars: [
+        { cx: 395, cy: 335, delay: "0.3s" },
+        { cx: 310, cy: 390, delay: "0.9s" },
+        { cx: 235, cy: 440, delay: "1.5s" },
+      ],
+      targetStar: { cx: 190, cy: 470 },
+    },
+    {
+      id: "contact" as ShrineId,
+      // Torii (500, 270) -> Toro Lantern (810, 470)
+      d: "M 520,290 Q 670,370 810,470",
+      stars: [
+        { cx: 605, cy: 335, delay: "0.4s" },
+        { cx: 690, cy: 390, delay: "1.0s" },
+        { cx: 765, cy: 440, delay: "1.6s" },
+      ],
+      targetStar: { cx: 810, cy: 470 },
+    },
+  ]
+
+  return (
+    <svg
+      className="absolute inset-0 w-full h-full pointer-events-none z-[5]"
+      viewBox="0 0 1000 600"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <defs>
+        <filter id="celestial-glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+
+      {/* Central Torii Sacred Star Anchor */}
+      <g transform="translate(500, 270)">
+        <circle
+          cx="0"
+          cy="0"
+          r="4.5"
+          fill={activeColor}
+          fillOpacity={hoveredShrine ? 0.95 : 0.4}
+          filter="url(#celestial-glow)"
+          className="hanakage-star-twinkle"
+        />
+        <circle cx="0" cy="0" r="1.5" fill="#ffffff" />
+      </g>
+
+      {constellations.map((c) => {
+        const isActive = hoveredShrine === c.id || hoveredShrine === "hero"
+        if (!isActive) return null
+
+        return (
+          <g key={c.id} className="transition-opacity duration-500">
+            {/* Hairline starlight thread */}
+            <path
+              d={c.d}
+              fill="none"
+              stroke={activeColor}
+              strokeWidth="1.2"
+              strokeDasharray="5 7"
+              strokeOpacity="0.85"
+              className="hanakage-constellation-line"
+              style={{
+                filter: isDark ? "drop-shadow(0 0 4px #c8b8ff)" : "drop-shadow(0 0 4px #b23a2e)",
+              }}
+            />
+
+            {/* Micro starlight sparks along the constellation ray */}
+            {c.stars.map((s, idx) => (
+              <g
+                key={idx}
+                transform={`translate(${s.cx}, ${s.cy})`}
+                className="hanakage-star-twinkle"
+                style={{
+                  animationDelay: s.delay,
+                  transformOrigin: "center",
+                  color: starGlow,
+                }}
+              >
+                {/* 4-point Diamond Star Sparkle */}
+                <path
+                  d="M 0,-5 Q 0,0 5,0 Q 0,0 0,5 Q 0,0 -5,0 Q 0,0 0,-5 Z"
+                  fill={activeColor}
+                  fillOpacity="0.95"
+                  filter="url(#celestial-glow)"
+                />
+                <circle cx="0" cy="0" r="1.2" fill="#ffffff" />
+              </g>
+            ))}
+
+            {/* Target Shrine Star Beacon */}
+            <g transform={`translate(${c.targetStar.cx}, ${c.targetStar.cy})`}>
+              <circle
+                cx="0"
+                cy="0"
+                r="10"
+                fill="none"
+                stroke={activeColor}
+                strokeWidth="1"
+                strokeDasharray="3 3"
+                strokeOpacity="0.5"
+                className="animate-spin"
+                style={{ animationDuration: "8s" }}
+              />
+              <path
+                d="M 0,-8 Q 0,0 8,0 Q 0,0 0,8 Q 0,0 -8,0 Q 0,0 0,-8 Z"
+                fill={activeColor}
+                fillOpacity="0.9"
+                filter="url(#celestial-glow)"
+              />
+              <circle cx="0" cy="0" r="2" fill="#ffffff" />
+            </g>
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
 
 /** Reusable plaque label shown below each shrine artifact */
 function ArtifactLabel({
@@ -26,24 +186,42 @@ function ArtifactLabel({
 }) {
   return (
     <div
-      className={`mt-1 sm:mt-2 px-3 py-1 rounded-full border text-center transition-all duration-300 shadow-md backdrop-blur-md ${
-        active ? "scale-110 shadow-lg" : "opacity-85"
+      className={`mt-1 sm:mt-2 px-3.5 py-1.5 rounded-full border text-center transition-all duration-300 backdrop-blur-md ${
+        active
+          ? "scale-110 shadow-xl"
+          : "opacity-85 scale-100 shadow-sm"
       }`}
       style={{
         borderColor: active
-          ? isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)"
+          ? isDark ? "var(--accent-ghost, #9b8fd4)" : "var(--accent-seal)"
           : "var(--border-color)",
-        background: isDark ? "rgba(21,18,16,0.88)" : "rgba(251,245,234,0.92)",
+        background: active
+          ? isDark ? "rgba(122, 111, 163, 0.28)" : "rgba(178, 58, 46, 0.18)"
+          : isDark ? "rgba(21,18,16,0.85)" : "rgba(251,245,234,0.9)",
+        boxShadow: active
+          ? isDark
+            ? "0 0 20px rgba(155, 143, 212, 0.45)"
+            : "0 0 20px rgba(178, 58, 46, 0.35)"
+          : undefined,
         color: "var(--text-primary)",
       }}
     >
-      <div className="flex items-center gap-1.5 font-bold text-xs sm:text-sm">
-        <span style={{ color: isDark ? "var(--accent-ghost,#7a6fa3)" : "var(--accent-seal)", fontFamily: "var(--font-heading)" }}>
+      <div className="flex items-center justify-center gap-1.5 font-bold text-xs sm:text-sm">
+        <span
+          className="px-1 py-0.5 rounded text-[11px]"
+          style={{
+            background: active
+              ? isDark ? "rgba(155, 143, 212, 0.25)" : "rgba(178, 58, 46, 0.15)"
+              : "transparent",
+            color: isDark ? "var(--accent-ghost,#c8b8ff)" : "var(--accent-seal)",
+            fontFamily: "var(--font-heading)",
+          }}
+        >
           {kanji}
         </span>
-        <span>{name}</span>
+        <span className="tracking-wide">{name}</span>
       </div>
-      <p className="text-[10px] opacity-60 font-mono">{sub}</p>
+      <p className="text-[10px] opacity-60 font-mono mt-0.5">{sub}</p>
     </div>
   )
 }
@@ -80,12 +258,23 @@ export function ShrineCourtyard() {
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
+  const handleHoverShrine = (id: ShrineId | null) => {
+    setHoveredShrine(id)
+    if (id && soundEnabled) {
+      if (id === "hero") playZenSound("wood", isDark)
+      else if (id === "about") playZenSound("water", isDark)
+      else if (id === "skills") playZenSound("bamboo", isDark)
+      else if (id === "projects") playZenSound("chime", isDark)
+      else if (id === "contact") playZenSound("flame", isDark)
+    }
+  }
+
   const handleOpenShrine = (id: ShrineId) => {
     if (soundEnabled) {
       if (id === "about") playZenSound("water", isDark)
       else if (id === "projects") playZenSound("wood", isDark)
-      else if (id === "skills") playZenSound("paper", isDark)
-      else if (id === "contact") playZenSound("chime", isDark)
+      else if (id === "skills") playZenSound("bamboo", isDark)
+      else if (id === "contact") playZenSound("flame", isDark)
       else playZenSound("gong", isDark)
     }
     setActiveShrine(id)
@@ -205,14 +394,40 @@ export function ShrineCourtyard() {
           aria-hidden="true"
         />
 
+        {/* CelestialConstellation: Japanese mystical star map (Seishuku 星宿) */}
+        <CelestialConstellation hoveredShrine={hoveredShrine} isDark={isDark} />
+
         {/* 1. CENTER: Gerbang Torii (Beranda / 序章) */}
         <div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] z-20 flex flex-col items-center cursor-pointer"
-          onMouseEnter={() => setHoveredShrine("hero")}
-          onMouseLeave={() => setHoveredShrine(null)}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[55%] z-20 flex flex-col items-center cursor-pointer group"
+          onMouseEnter={() => handleHoverShrine("hero")}
+          onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("hero")}
         >
-          <ToriiGateArtifact isHovered={hoveredShrine === "hero"} />
+          {/* Sumi-e Ensō Aura on hover */}
+          {hoveredShrine === "hero" && (
+            <div
+              className="absolute -inset-10 sm:-inset-14 pointer-events-none z-0 hanakage-sumi-enso flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 200 200" className="w-full h-full opacity-65">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="78"
+                  fill="none"
+                  stroke={isDark ? "#c8b8ff" : "#b23a2e"}
+                  strokeWidth="3.5"
+                  strokeDasharray="420 70"
+                  strokeLinecap="round"
+                  style={{ filter: "blur(1px)" }}
+                />
+              </svg>
+            </div>
+          )}
+          <div className="relative z-10 transition-transform duration-300 group-hover:scale-105">
+            <ToriiGateArtifact isHovered={hoveredShrine === "hero"} />
+          </div>
           <ArtifactLabel
             kanji="壱・始"
             name="Beranda & Profil"
@@ -224,12 +439,35 @@ export function ShrineCourtyard() {
 
         {/* 2. TOP RIGHT: Pohon & Papan Ema (Karya / 卷) */}
         <div
-          className="absolute top-[5%] right-[6%] sm:right-[12%] z-10 flex flex-col items-center cursor-pointer"
-          onMouseEnter={() => setHoveredShrine("projects")}
-          onMouseLeave={() => setHoveredShrine(null)}
+          className="absolute top-[5%] right-[6%] sm:right-[12%] z-10 flex flex-col items-center cursor-pointer group"
+          onMouseEnter={() => handleHoverShrine("projects")}
+          onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("projects")}
         >
-          <EmaWallArtifact isHovered={hoveredShrine === "projects"} />
+          {/* Sumi-e Ensō Aura on hover */}
+          {hoveredShrine === "projects" && (
+            <div
+              className="absolute -inset-8 sm:-inset-12 pointer-events-none z-0 hanakage-sumi-enso flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 200 200" className="w-full h-full opacity-65">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="76"
+                  fill="none"
+                  stroke={isDark ? "#c8b8ff" : "#b23a2e"}
+                  strokeWidth="3.5"
+                  strokeDasharray="400 80"
+                  strokeLinecap="round"
+                  style={{ filter: "blur(1px)" }}
+                />
+              </svg>
+            </div>
+          )}
+          <div className="relative z-10 transition-transform duration-300 group-hover:scale-105">
+            <EmaWallArtifact isHovered={hoveredShrine === "projects"} />
+          </div>
           <ArtifactLabel
             kanji="四・卷"
             name="Karya & Proyek"
@@ -241,12 +479,35 @@ export function ShrineCourtyard() {
 
         {/* 3. BOTTOM LEFT: Bejana Air Chōzubachi (Tentang / 影) */}
         <div
-          className="absolute bottom-[5%] left-[6%] sm:left-[12%] z-10 flex flex-col items-center cursor-pointer"
-          onMouseEnter={() => setHoveredShrine("about")}
-          onMouseLeave={() => setHoveredShrine(null)}
+          className="absolute bottom-[5%] left-[6%] sm:left-[12%] z-10 flex flex-col items-center cursor-pointer group"
+          onMouseEnter={() => handleHoverShrine("about")}
+          onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("about")}
         >
-          <ChozubachiArtifact isHovered={hoveredShrine === "about"} />
+          {/* Sumi-e Ensō Aura on hover */}
+          {hoveredShrine === "about" && (
+            <div
+              className="absolute -inset-8 sm:-inset-12 pointer-events-none z-0 hanakage-sumi-enso flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 200 200" className="w-full h-full opacity-65">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="76"
+                  fill="none"
+                  stroke={isDark ? "#c8b8ff" : "#b23a2e"}
+                  strokeWidth="3.5"
+                  strokeDasharray="400 80"
+                  strokeLinecap="round"
+                  style={{ filter: "blur(1px)" }}
+                />
+              </svg>
+            </div>
+          )}
+          <div className="relative z-10 transition-transform duration-300 group-hover:scale-105">
+            <ChozubachiArtifact isHovered={hoveredShrine === "about"} />
+          </div>
           <ArtifactLabel
             kanji="弐・影"
             name="Tentang Saya"
@@ -258,12 +519,35 @@ export function ShrineCourtyard() {
 
         {/* 4. TOP LEFT: Kotak Omikuji (Keahlian / 印) */}
         <div
-          className="absolute top-[5%] left-[6%] sm:left-[12%] z-10 flex flex-col items-center cursor-pointer"
-          onMouseEnter={() => setHoveredShrine("skills")}
-          onMouseLeave={() => setHoveredShrine(null)}
+          className="absolute top-[5%] left-[6%] sm:left-[12%] z-10 flex flex-col items-center cursor-pointer group"
+          onMouseEnter={() => handleHoverShrine("skills")}
+          onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("skills")}
         >
-          <OmikujiArtifact isHovered={hoveredShrine === "skills"} />
+          {/* Sumi-e Ensō Aura on hover */}
+          {hoveredShrine === "skills" && (
+            <div
+              className="absolute -inset-8 sm:-inset-12 pointer-events-none z-0 hanakage-sumi-enso flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 200 200" className="w-full h-full opacity-65">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="76"
+                  fill="none"
+                  stroke={isDark ? "#c8b8ff" : "#b23a2e"}
+                  strokeWidth="3.5"
+                  strokeDasharray="400 80"
+                  strokeLinecap="round"
+                  style={{ filter: "blur(1px)" }}
+                />
+              </svg>
+            </div>
+          )}
+          <div className="relative z-10 transition-transform duration-300 group-hover:scale-105">
+            <OmikujiArtifact isHovered={hoveredShrine === "skills"} />
+          </div>
           <ArtifactLabel
             kanji="参・印"
             name="Keahlian"
@@ -275,12 +559,35 @@ export function ShrineCourtyard() {
 
         {/* 5. BOTTOM RIGHT: Lentera Kasuga Tōrō (Kontak / 結) */}
         <div
-          className="absolute bottom-[5%] right-[6%] sm:right-[12%] z-10 flex flex-col items-center cursor-pointer"
-          onMouseEnter={() => setHoveredShrine("contact")}
-          onMouseLeave={() => setHoveredShrine(null)}
+          className="absolute bottom-[5%] right-[6%] sm:right-[12%] z-10 flex flex-col items-center cursor-pointer group"
+          onMouseEnter={() => handleHoverShrine("contact")}
+          onMouseLeave={() => handleHoverShrine(null)}
           onClick={() => handleOpenShrine("contact")}
         >
-          <ToroLanternArtifact isHovered={hoveredShrine === "contact"} />
+          {/* Sumi-e Ensō Aura on hover */}
+          {hoveredShrine === "contact" && (
+            <div
+              className="absolute -inset-8 sm:-inset-12 pointer-events-none z-0 hanakage-sumi-enso flex items-center justify-center"
+              aria-hidden="true"
+            >
+              <svg viewBox="0 0 200 200" className="w-full h-full opacity-65">
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="76"
+                  fill="none"
+                  stroke={isDark ? "#c8b8ff" : "#b23a2e"}
+                  strokeWidth="3.5"
+                  strokeDasharray="400 80"
+                  strokeLinecap="round"
+                  style={{ filter: "blur(1px)" }}
+                />
+              </svg>
+            </div>
+          )}
+          <div className="relative z-10 transition-transform duration-300 group-hover:scale-105">
+            <ToroLanternArtifact isHovered={hoveredShrine === "contact"} />
+          </div>
           <ArtifactLabel
             kanji="五・結"
             name="Hubungi / Pesan"
@@ -291,51 +598,30 @@ export function ShrineCourtyard() {
         </div>
       </main>
 
-      {/* Bottom Shrine Quick Dock & Exploration Hint */}
-      <footer className="relative z-30 px-4 pb-6 flex flex-col items-center gap-2.5 select-none">
-        {/* Quick Shrine Selector Pills (For instant jump) */}
-        <nav
-          aria-label="Peta Cepat Kuil Zen"
-          className="flex items-center gap-1.5 sm:gap-2.5 p-1.5 rounded-full border backdrop-blur-md shadow-xl transition-all"
+      {/* Zen Garden Ambient Exploration Footer */}
+      <footer className="relative z-30 px-4 pb-6 flex flex-col items-center gap-2 select-none pointer-events-none">
+        <div
+          className="flex items-center gap-2 text-xs tracking-widest px-4 py-1.5 rounded-full border backdrop-blur-md transition-all duration-300 pointer-events-auto shadow-md"
           style={{
-            borderColor: "var(--border-color)",
+            borderColor: hoveredShrine
+              ? isDark
+                ? "var(--accent-ghost, #9b8fd4)"
+                : "var(--accent-seal)"
+              : "var(--border-color)",
             background: isDark ? "rgba(18, 16, 14, 0.85)" : "rgba(251, 245, 234, 0.85)",
+            color: "var(--text-primary)",
+            fontFamily: "var(--font-heading)",
           }}
         >
-          {SHRINES.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => handleOpenShrine(s.id)}
-              className="group px-3 py-1.5 rounded-full transition-all duration-200 flex items-center gap-1.5 hover:scale-105 active:scale-95"
-              style={{
-                border: "1px solid transparent",
-                color: "var(--text-primary)",
-              }}
-              onMouseEnter={() => setHoveredShrine(s.id)}
-              onMouseLeave={() => setHoveredShrine(null)}
-            >
-              <span
-                className="font-bold text-xs"
-                style={{
-                  color: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
-                  fontFamily: "var(--font-heading)",
-                }}
-              >
-                {s.kanji}
-              </span>
-              <span className="text-xs hidden sm:inline">{s.name}</span>
-            </button>
-          ))}
-        </nav>
-
-        {/* Exploration Helper Hint */}
-        <div
-          className="flex items-center gap-2 text-xs tracking-wider opacity-60"
-          style={{ fontFamily: "var(--font-heading)", color: "var(--text-muted)" }}
-        >
-          <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-          <span>Sentuh atau klik objek kuil di taman untuk membuka rahasianya</span>
-          <Compass className="w-3.5 h-3.5 hidden sm:inline" />
+          <Sparkles
+            className="w-3.5 h-3.5 animate-pulse"
+            style={{ color: isDark ? "#c8b8ff" : "var(--accent-seal)" }}
+          />
+          <span>
+            {hoveredShrine
+              ? `Rasi Bintang Terhubung: ${SHRINES.find((s) => s.id === hoveredShrine)?.name} (Klik untuk masuk)`
+              : "Sentuh artefak kuil untuk menghubungkan rasi bintang Hanakage"}
+          </span>
         </div>
       </footer>
 
@@ -345,14 +631,6 @@ export function ShrineCourtyard() {
         onClose={() => setActiveShrine(null)}
         onSelectShrine={(id) => handleOpenShrine(id)}
       />
-
-      {/* Client-only components: rendered only after hydration (mounted = true) */}
-      {mounted && (
-        <SensuFanNav
-          activeShrine={activeShrine}
-          onSelectShrine={(id) => handleOpenShrine(id)}
-        />
-      )}
 
       {/* Shoji Door Entrance Experience: appears on first visit & on manual replay */}
       {showIntro && (
