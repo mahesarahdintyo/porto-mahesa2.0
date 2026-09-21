@@ -413,14 +413,14 @@ export function ShrineCourtyard() {
           </div>
           <ArtifactLabel
             kanji="壱・始"
-            name="Beranda & Profil"
-            sub="Gerbang Torii Kuil"
+            name="Home & Profile"
+            sub="Torii Shrine Gate"
             active={hoveredShrine === "hero"}
             isDark={isDark}
           />
         </div>
 
-        {/* 2. TOP RIGHT: Pohon & Papan Ema (Karya / 卷) */}
+        {/* 2. TOP RIGHT: Pohon & Papan Ema (Projects / 卷) */}
         <div
           className="absolute top-[5%] right-[6%] sm:right-[12%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("projects")}
@@ -453,14 +453,14 @@ export function ShrineCourtyard() {
           </div>
           <ArtifactLabel
             kanji="四・卷"
-            name="Karya & Proyek"
-            sub="Papan Gantung Ema"
+            name="Projects"
+            sub="Ema Votive Plaque"
             active={hoveredShrine === "projects"}
             isDark={isDark}
           />
         </div>
 
-        {/* 3. BOTTOM LEFT: Bejana Air Chōzubachi (Tentang / 影) */}
+        {/* 3. BOTTOM LEFT: Bejana Air Chōzubachi (About Me / 影) */}
         <div
           className="absolute bottom-[5%] left-[6%] sm:left-[12%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("about")}
@@ -493,14 +493,14 @@ export function ShrineCourtyard() {
           </div>
           <ArtifactLabel
             kanji="弐・影"
-            name="Tentang Saya"
-            sub="Bejana Air Batu"
+            name="About Me"
+            sub="Stone Water Basin"
             active={hoveredShrine === "about"}
             isDark={isDark}
           />
         </div>
 
-        {/* 4. TOP LEFT: Kotak Omikuji (Keahlian / 印) */}
+        {/* 4. TOP LEFT: Kotak Omikuji (Skills / 印) */}
         <div
           className="absolute top-[5%] left-[6%] sm:left-[12%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("skills")}
@@ -533,14 +533,14 @@ export function ShrineCourtyard() {
           </div>
           <ArtifactLabel
             kanji="参・印"
-            name="Keahlian"
-            sub="Kotak Ramalan Omikuji"
+            name="Skills"
+            sub="Omikuji Fortune Box"
             active={hoveredShrine === "skills"}
             isDark={isDark}
           />
         </div>
 
-        {/* 5. BOTTOM RIGHT: Lentera Kasuga Tōrō (Kontak / 結) */}
+        {/* 5. BOTTOM RIGHT: Lentera Kasuga Tōrō (Contact / 結) */}
         <div
           className="absolute bottom-[5%] right-[6%] sm:right-[12%] z-10 flex flex-col items-center cursor-pointer group"
           onMouseEnter={() => handleHoverShrine("contact")}
@@ -573,8 +573,8 @@ export function ShrineCourtyard() {
           </div>
           <ArtifactLabel
             kanji="五・結"
-            name="Hubungi / Pesan"
-            sub="Lentera Kasuga Kuno"
+            name="Contact"
+            sub="Kasuga Stone Lantern"
             active={hoveredShrine === "contact"}
             isDark={isDark}
           />
@@ -602,8 +602,8 @@ export function ShrineCourtyard() {
           />
           <span>
             {hoveredShrine
-              ? `Rasi Bintang Terhubung: ${SHRINES.find((s) => s.id === hoveredShrine)?.name} (Klik untuk masuk)`
-              : "Sentuh artefak kuil untuk menghubungkan rasi bintang Hanakage"}
+              ? `Constellation Linked: ${SHRINES.find((s) => s.id === hoveredShrine)?.name} (Click to enter)`
+              : "Touch shrine artifacts to link the Hanakage constellations"}
           </span>
         </div>
       </footer>

@@ -11,8 +11,8 @@ export function SkillsSection() {
   return (
     <section id="skills" className="hanakage-section">
       <div ref={revealRef} className="hanakage-reveal">
-        <p className="hanakage-eyebrow mb-4">Keahlian</p>
-        <h2 className="hanakage-heading text-4xl md:text-5xl mb-6">Segel yang Saya Bawa</h2>
+        <p className="hanakage-eyebrow mb-4">Skills</p>
+        <h2 className="hanakage-heading text-4xl md:text-5xl mb-6">Skills &amp; Technologies</h2>
         <BrushDivider />
         <div className="flex flex-wrap gap-5 mt-8">
           {skills.map((skill) => (

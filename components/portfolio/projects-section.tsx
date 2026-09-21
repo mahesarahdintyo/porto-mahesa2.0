@@ -55,8 +55,8 @@ export function ProjectsSection() {
   return (
     <section id="projects" className="hanakage-section">
       <div ref={revealRef} className="hanakage-reveal">
-        <p className="hanakage-eyebrow mb-4">Karya</p>
-        <h2 className="hanakage-heading text-4xl md:text-5xl mb-6">Kertas yang Ditempel</h2>
+        <p className="hanakage-eyebrow mb-4">Projects</p>
+        <h2 className="hanakage-heading text-4xl md:text-5xl mb-6">Featured Projects</h2>
         <BrushDivider />
       </div>
       <div className="grid gap-8 sm:grid-cols-2 mt-8">

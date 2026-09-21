@@ -44,14 +44,14 @@ export function HeroSection({ onNavigate }: HeroSectionProps = {}) {
           onClick={() => onNavigate?.("projects")}
           className="hanakage-btn"
         >
-          Lihat Karya
+          View Projects
         </button>
         <button
           type="button"
           onClick={() => onNavigate?.("contact")}
           className="hanakage-btn"
         >
-          Hubungi Saya
+          Contact Me
         </button>
       </div>
     </section>

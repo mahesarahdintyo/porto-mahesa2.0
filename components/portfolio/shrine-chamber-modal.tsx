@@ -7,11 +7,12 @@ import { playZenSound } from "@/lib/sound"
 import { X, ArrowUp } from "lucide-react"
 import { HeroSection } from "./hero-section"
 import { AboutSection } from "./about-section"
+import { ExperienceSection } from "./experience-section"
 import { SkillsSection } from "./skills-section"
 import { ProjectsSection } from "./projects-section"
 import { ContactSection } from "./contact-section"
 
-export type ShrineId = "hero" | "about" | "skills" | "projects" | "contact"
+export type ShrineId = "hero" | "about" | "experience" | "projects" | "skills" | "contact"
 
 interface ShrineInfo {
   id: ShrineId
@@ -22,11 +23,12 @@ interface ShrineInfo {
 }
 
 export const SHRINES: ShrineInfo[] = [
-  { id: "hero", name: "Beranda", kanji: "始", subtitle: "序章・Hajime", artifactName: "Gerbang Torii" },
-  { id: "about", name: "Tentang", kanji: "影", subtitle: "物語・Monogatari", artifactName: "Bejana Chōzubachi" },
-  { id: "skills", name: "Keahlian", kanji: "印", subtitle: "印章・Inshō", artifactName: "Kotak Omikuji" },
-  { id: "projects", name: "Karya", kanji: "卷", subtitle: "絵巻・Emaki", artifactName: "Papan Ema" },
-  { id: "contact", name: "Kontak", kanji: "結", subtitle: "結び・Tegami", artifactName: "Lentera Tōrō" },
+  { id: "hero", name: "Home", kanji: "始", subtitle: "序章・Hajime", artifactName: "Torii Gate" },
+  { id: "about", name: "About Me", kanji: "影", subtitle: "物語・Monogatari", artifactName: "Stone Chōzubachi" },
+  { id: "experience", name: "Experience", kanji: "歩", subtitle: "歩み・Ayumi", artifactName: "Ema Board" },
+  { id: "projects", name: "Projects", kanji: "卷", subtitle: "絵巻・Emaki", artifactName: "Scroll of Works" },
+  { id: "skills", name: "Skills", kanji: "印", subtitle: "印章・Inshō", artifactName: "Omikuji Box" },
+  { id: "contact", name: "Contact", kanji: "結", subtitle: "結び・Tegami", artifactName: "Tōrō Lantern" },
 ]
 
 interface ShrineChamberModalProps {
@@ -163,7 +165,7 @@ export function ShrineChamberModal({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Balairung Kuil Hanakage"
+      aria-label="Hanakage Shrine Chamber"
       className="fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden select-none"
       style={{
         background: "var(--bg-base)",
@@ -255,7 +257,7 @@ export function ShrineChamberModal({
                 {profile?.name || "Mahesa"}
               </h2>
               <p className="text-xs opacity-60 font-mono mt-1" style={{ color: "var(--text-muted)" }}>
-                {profile?.title || "Perancang & Pengembang Antarmuka"}
+                {profile?.title || "Interface Designer & Developer"}
               </p>
             </div>
           </div>
@@ -263,7 +265,7 @@ export function ShrineChamberModal({
           {/* Center Navigation List with ScrollSpy */}
           <div className="my-auto py-6 space-y-2">
             <div className="text-[10px] font-mono uppercase tracking-widest opacity-50 px-2 mb-2 flex items-center justify-between">
-              <span>NAVIGASI KUIL</span>
+              <span>NAVIGATION</span>
               <span>▼</span>
             </div>
 
@@ -343,9 +345,9 @@ export function ShrineChamberModal({
           {/* Bottom Footer Section: Section Indicator & Return Button */}
           <div className="space-y-4 pt-4 border-t" style={{ borderColor: "var(--border-color)" }}>
             <div className="flex items-center justify-between text-xs font-mono opacity-60 px-1">
-              <span>BAGIAN</span>
+              <span>SECTION</span>
               <span className="font-bold">
-                0{currentIdx + 1} / 05
+                0{currentIdx + 1} / 06
               </span>
             </div>
 
@@ -357,10 +359,10 @@ export function ShrineChamberModal({
                 background: isDark ? "rgba(122, 111, 163, 0.18)" : "rgba(178, 58, 46, 0.12)",
                 color: isDark ? "var(--accent-ghost, #c8b8ff)" : "var(--accent-seal)",
               }}
-              title="Kembali ke Taman Kuil Luar (ESC)"
+              title="Back to Outer Shrine Garden (ESC)"
             >
               <span className="font-serif font-bold text-sm">戻</span>
-              <span>Kembali ke Taman (ESC)</span>
+              <span>Back to Garden (ESC)</span>
             </button>
           </div>
         </aside>
@@ -383,7 +385,7 @@ export function ShrineChamberModal({
               {SHRINES.find((s) => s.id === activeSection)?.kanji || "始"}
             </span>
             <span className="font-bold text-sm">
-              {SHRINES.find((s) => s.id === activeSection)?.name || "Beranda"}
+              {SHRINES.find((s) => s.id === activeSection)?.name || "Home"}
             </span>
           </div>
 
@@ -408,7 +410,7 @@ export function ShrineChamberModal({
             onClick={handleGracefulClose}
             className="p-2 rounded-lg border text-xs font-bold transition-transform active:scale-95 cursor-pointer"
             style={{ borderColor: "var(--border-color)", color: "var(--text-primary)" }}
-            aria-label="Tutup"
+            aria-label="Close"
           >
             <X className="w-4 h-4" />
           </button>
@@ -457,24 +459,24 @@ export function ShrineChamberModal({
             {/* Sacred Divider: 2 -> 3 */}
             <div className="flex items-center justify-center gap-4 opacity-40 select-none">
               <span className="h-px flex-1 bg-current" />
-              <span className="font-serif text-xs tracking-widest">弐・影 ➔ 参・印</span>
+              <span className="font-serif text-xs tracking-widest">弐・影 ➔ 参・歩</span>
               <span className="h-px flex-1 bg-current" />
             </div>
 
-            {/* 3. SKILLS SECTION (03 参・印) */}
+            {/* 3. EXPERIENCE SECTION (03 参・歩) */}
             <section
-              id="shrine-section-skills"
-              data-shrine-id="skills"
+              id="shrine-section-experience"
+              data-shrine-id="experience"
               className="scroll-mt-8"
               style={{ contain: "layout style" }}
             >
-              <SkillsSection />
+              <ExperienceSection />
             </section>
 
             {/* Sacred Divider: 3 -> 4 */}
             <div className="flex items-center justify-center gap-4 opacity-40 select-none">
               <span className="h-px flex-1 bg-current" />
-              <span className="font-serif text-xs tracking-widest">参・印 ➔ 四・卷</span>
+              <span className="font-serif text-xs tracking-widest">参・歩 ➔ 四・卷</span>
               <span className="h-px flex-1 bg-current" />
             </div>
 
@@ -491,11 +493,28 @@ export function ShrineChamberModal({
             {/* Sacred Divider: 4 -> 5 */}
             <div className="flex items-center justify-center gap-4 opacity-40 select-none">
               <span className="h-px flex-1 bg-current" />
-              <span className="font-serif text-xs tracking-widest">四・卷 ➔ 五・結</span>
+              <span className="font-serif text-xs tracking-widest">四・卷 ➔ 五・印</span>
               <span className="h-px flex-1 bg-current" />
             </div>
 
-            {/* 5. CONTACT SECTION (05 五・結) */}
+            {/* 5. SKILLS SECTION (05 五・印) */}
+            <section
+              id="shrine-section-skills"
+              data-shrine-id="skills"
+              className="scroll-mt-8"
+              style={{ contain: "layout style" }}
+            >
+              <SkillsSection />
+            </section>
+
+            {/* Sacred Divider: 5 -> 6 */}
+            <div className="flex items-center justify-center gap-4 opacity-40 select-none">
+              <span className="h-px flex-1 bg-current" />
+              <span className="font-serif text-xs tracking-widest">五・印 ➔ 六・結</span>
+              <span className="h-px flex-1 bg-current" />
+            </div>
+
+            {/* 6. CONTACT SECTION (06 六・結) */}
             <section
               id="shrine-section-contact"
               data-shrine-id="contact"
@@ -518,7 +537,7 @@ export function ShrineChamberModal({
                   className="hover:underline hover:opacity-100 cursor-pointer flex items-center gap-1"
                 >
                   <ArrowUp className="w-3.5 h-3.5" />
-                  <span>Kembali ke Puncak Kuil</span>
+                  <span>Back to Top</span>
                 </button>
                 <span>・</span>
                 <button
@@ -528,7 +547,7 @@ export function ShrineChamberModal({
                     color: isDark ? "var(--accent-ghost, #c8b8ff)" : "var(--accent-seal)",
                   }}
                 >
-                  Keluar ke Taman Kuil ⛩️
+                  Exit to Garden ⛩️
                 </button>
               </div>
             </div>
