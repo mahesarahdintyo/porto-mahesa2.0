@@ -105,14 +105,18 @@
   left: -20%;
   right: -20%;
   bottom: -10%;
-  height: 40vh;
+  height: 45vh;
   z-index: 2;
   pointer-events: none;
   opacity: 0;
   transition: opacity 1s ease;
-  background: linear-gradient(to top, rgba(58, 54, 47, 0.35), transparent);
-  filter: blur(18px);
+  /* Layered gradients simulate fog without expensive filter:blur */
+  background:
+    linear-gradient(to top, rgba(28, 24, 18, 0.55) 0%, rgba(28, 24, 18, 0.2) 40%, transparent 100%),
+    linear-gradient(to top, rgba(58, 54, 47, 0.25) 0%, transparent 65%);
   animation: hanakage-fog-drift 40s linear infinite;
+  /* GPU-compositable: only uses transform + opacity */
+  will-change: transform;
 }
 
 [data-hanakage-theme="yurei"] .hanakage-fog {
@@ -251,7 +255,7 @@ html.hanakage-flicker {
 }
 
 [data-hanakage-theme="hanami"] .hanakage-heading {
-  filter: drop-shadow(0 0 1px rgba(58, 53, 50, 0.18));
+  text-shadow: 0 1px 2px rgba(58, 53, 50, 0.12);
 }
 
 [data-hanakage-theme="yurei"] .hanakage-heading-glitch {
@@ -268,33 +272,9 @@ html.hanakage-flicker {
   line-height: 1.75;
 }
 
-/* Torn paper card edge */
+/* Torn paper card edge — uses border-radius only for scroll perf (clip-path is expensive) */
 .hanakage-torn {
-  clip-path: polygon(
-    0% 2%,
-    4% 0%,
-    12% 1.5%,
-    20% 0%,
-    30% 1%,
-    40% 0%,
-    52% 1.5%,
-    64% 0%,
-    76% 1%,
-    88% 0%,
-    96% 1.5%,
-    100% 0%,
-    100% 97%,
-    95% 100%,
-    86% 98.5%,
-    74% 100%,
-    62% 98.5%,
-    50% 100%,
-    38% 98.5%,
-    26% 100%,
-    14% 98.5%,
-    5% 100%,
-    0% 98%
-  );
+  border-radius: 2px 6px 2px 6px / 4px 2px 4px 2px;
 }
 
 .hanakage-card {
@@ -302,12 +282,13 @@ html.hanakage-flicker {
   border: 1px solid var(--border-color);
   box-shadow: 0 14px 28px -12px var(--shadow-color);
   position: relative;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  will-change: transform;
 }
 
 .hanakage-card:hover {
-  transform: perspective(800px) rotateX(1.5deg) rotateY(-1.5deg) translateY(-4px);
-  box-shadow: 0 24px 40px -14px var(--shadow-color);
+  transform: translateY(-5px);
+  box-shadow: 0 22px 36px -14px var(--shadow-color);
 }
 
 [data-hanakage-theme="yurei"] .hanakage-card:hover {
@@ -512,31 +493,28 @@ html.hanakage-flicker {
 @keyframes hanakage-scroll-reveal-light {
   from {
     opacity: 0;
-    transform: translateY(24px) scaleY(0.97);
-    clip-path: inset(0 0 100% 0);
+    transform: translateY(28px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scaleY(1);
-    clip-path: inset(0 0 0% 0);
+    transform: translateY(0);
   }
 }
 
 @keyframes hanakage-scroll-reveal-dark {
   from {
     opacity: 0;
-    filter: blur(10px);
-    transform: translateY(18px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    filter: blur(0);
     transform: translateY(0);
   }
 }
 
 .hanakage-reveal {
   opacity: 0;
+  will-change: transform, opacity;
 }
 
 .hanakage-reveal.is-visible {
@@ -561,8 +539,9 @@ html.hanakage-flicker {
 .emaki-scrollable {
   scrollbar-width: thin;
   scrollbar-color: var(--border-color) transparent;
-  scroll-behavior: smooth;
+  /* scroll-behavior handled by JS scrollIntoView to avoid double-smooth conflict */
   -webkit-overflow-scrolling: touch;
+  will-change: scroll-position;
 }
 
 .emaki-scrollable::-webkit-scrollbar {

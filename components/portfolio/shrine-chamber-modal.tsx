@@ -422,7 +422,7 @@ export function ShrineChamberModal({
           ref={scrollContainerRef}
           className="flex-1 h-full overflow-y-auto emaki-scrollable select-text"
           style={{
-            contain: "paint",
+            contain: "strict",
             willChange: "scroll-position",
           }}
         >
@@ -432,7 +432,7 @@ export function ShrineChamberModal({
               id="shrine-section-hero"
               data-shrine-id="hero"
               className="scroll-mt-8"
-              style={{ contain: "content" }}
+              style={{ contain: "layout style" }}
             >
               <HeroSection onNavigate={(s) => scrollToSection(s)} />
             </section>
@@ -449,7 +449,7 @@ export function ShrineChamberModal({
               id="shrine-section-about"
               data-shrine-id="about"
               className="scroll-mt-8"
-              style={{ contain: "content" }}
+              style={{ contain: "layout style" }}
             >
               <AboutSection />
             </section>
@@ -466,7 +466,7 @@ export function ShrineChamberModal({
               id="shrine-section-skills"
               data-shrine-id="skills"
               className="scroll-mt-8"
-              style={{ contain: "content" }}
+              style={{ contain: "layout style" }}
             >
               <SkillsSection />
             </section>
@@ -483,7 +483,7 @@ export function ShrineChamberModal({
               id="shrine-section-projects"
               data-shrine-id="projects"
               className="scroll-mt-8"
-              style={{ contain: "content" }}
+              style={{ contain: "layout style" }}
             >
               <ProjectsSection />
             </section>
@@ -500,7 +500,7 @@ export function ShrineChamberModal({
               id="shrine-section-contact"
               data-shrine-id="contact"
               className="scroll-mt-8 pb-16"
-              style={{ contain: "content" }}
+              style={{ contain: "layout style" }}
             >
               <ContactSection />
             </section>
