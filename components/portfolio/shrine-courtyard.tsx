@@ -59,11 +59,11 @@ export function ShrineCourtyard() {
   const [soundEnabled, setSoundEnabled] = useState(true)
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 })
   const [introKey, setIntroKey] = useState(0)
-  const [manualIntroTrigger, setManualIntroTrigger] = useState(false)
+  const [showIntro, setShowIntro] = useState(true)
 
   const triggerIntroReplay = () => {
     setIntroKey((k) => k + 1)
-    setManualIntroTrigger(true)
+    setShowIntro(true)
   }
 
   // Parallax tilt based on cursor
@@ -348,22 +348,18 @@ export function ShrineCourtyard() {
 
       {/* Client-only components: rendered only after hydration (mounted = true) */}
       {mounted && (
-        <>
-          {/* Interactive Sensu Folding Fan Nav (Bottom Right) */}
-          <SensuFanNav
-            activeShrine={activeShrine}
-            onSelectShrine={(id) => handleOpenShrine(id)}
-          />
+        <SensuFanNav
+          activeShrine={activeShrine}
+          onSelectShrine={(id) => handleOpenShrine(id)}
+        />
+      )}
 
-          {/* Shoji Door Entrance Experience (Only renders when triggered via Katana button) */}
-          {manualIntroTrigger && (
-            <ShojiIntro
-              key={introKey}
-              manualTrigger={manualIntroTrigger}
-              onComplete={() => setManualIntroTrigger(false)}
-            />
-          )}
-        </>
+      {/* Shoji Door Entrance Experience: appears on first visit & on manual replay */}
+      {showIntro && (
+        <ShojiIntro
+          key={introKey}
+          onComplete={() => setShowIntro(false)}
+        />
       )}
     </div>
   )

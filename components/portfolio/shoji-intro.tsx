@@ -6,33 +6,16 @@ import { playZenSound } from "@/lib/sound"
 
 interface ShojiIntroProps {
   onComplete?: () => void
-  manualTrigger?: boolean
 }
 
-export function ShojiIntro({ onComplete, manualTrigger = false }: ShojiIntroProps) {
+export function ShojiIntro({ onComplete }: ShojiIntroProps) {
   const { theme } = useHanakageTheme()
   const isDark = theme === "yurei"
 
-  const [mounted, setMounted] = useState(false)
   const [slashed, setSlashed] = useState(false)
   const [shaking, setShaking] = useState(false)
   const [opened, setOpened] = useState(false)
-  const [visible, setVisible] = useState(manualTrigger)
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  useEffect(() => {
-    if (manualTrigger) {
-      setVisible(true)
-      setSlashed(false)
-      setShaking(false)
-      setOpened(false)
-    } else {
-      setVisible(false)
-    }
-  }, [manualTrigger])
+  const [visible, setVisible] = useState(true)
 
   const handleSlashAndEnter = () => {
     if (slashed) return
@@ -53,13 +36,12 @@ export function ShojiIntro({ onComplete, manualTrigger = false }: ShojiIntroProp
 
     // Cleanup
     setTimeout(() => {
-      sessionStorage.setItem("hanakage_shoji_intro_seen", "true")
       setVisible(false)
       onComplete?.()
     }, 1600)
   }
 
-  if (!mounted || !visible) return null
+  if (!visible) return null
 
   // Colors based on theme
   const bladeColor = isDark ? "#c8b8ff" : "#ffffff"
