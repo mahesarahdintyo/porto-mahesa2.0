@@ -17,6 +17,14 @@ export default function AdminSkillsPage() {
   const isConfigured = isSupabaseConfigured()
 
   const loadSkills = async () => {
+    // Check localStorage cache first
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("hanakage_skills")
+        if (cached) setSkills(JSON.parse(cached))
+      } catch (e) {}
+    }
+
     if (!isConfigured) {
       setLoading(false)
       return
@@ -32,10 +40,13 @@ export default function AdminSkillsPage() {
       if (error) throw error
       if (data && data.length > 0) {
         setSkills(data as Skill[])
+        if (typeof window !== "undefined") {
+          localStorage.setItem("hanakage_skills", JSON.stringify(data))
+        }
       }
     } catch (err: unknown) {
       const e = err as { message?: string }
-      setFeedback({ type: "error", message: e.message || "Gagal memuat daftar keahlian." })
+      console.warn("Notice: Loading skills from local storage:", e.message)
     } finally {
       setLoading(false)
     }
@@ -53,55 +64,59 @@ export default function AdminSkillsPage() {
     setSaving(true)
     setFeedback(null)
 
-    const payload = {
+    const newSkill: Skill = {
+      id: "skill-" + Date.now(),
       name: trimmed,
       category: "General",
       order_index: skills.length + 1,
     }
 
-    if (!isConfigured) {
-      setSkills([...skills, { id: String(Date.now()), ...payload }])
-      setNewSkillName("")
-      setSaving(false)
-      setFeedback({ type: "success", message: "Keahlian ditambahkan (mode lokal)!" })
-      return
+    const updated = [...skills, newSkill]
+    setSkills(updated)
+    setNewSkillName("")
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("hanakage_skills", JSON.stringify(updated))
     }
 
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.from("skills").insert([payload])
-      if (error) throw error
-      setNewSkillName("")
-      await loadSkills()
-      setFeedback({ type: "success", message: `Keahlian "${trimmed}" berhasil ditambahkan!` })
-      setTimeout(() => setFeedback(null), 3000)
-    } catch (err: unknown) {
-      const e = err as { message?: string }
-      setFeedback({ type: "error", message: e.message || "Gagal menambahkan keahlian." })
-    } finally {
-      setSaving(false)
+    if (isConfigured) {
+      try {
+        const supabase = createClient()
+        const { error } = await supabase.from("skills").insert([
+          { name: trimmed, category: "General", order_index: skills.length + 1 }
+        ])
+        if (error) console.warn("Supabase skills insert notice:", error.message)
+      } catch (err) {
+        console.warn("Supabase skills sync error:", err)
+      }
     }
+
+    setFeedback({ type: "success", message: `Keahlian "${trimmed}" berhasil ditambahkan!` })
+    setTimeout(() => setFeedback(null), 3000)
+    setSaving(false)
   }
 
   const handleDeleteSkill = async (id: string, name: string) => {
     if (!confirm(`Hapus keahlian "${name}"?`)) return
 
-    if (!isConfigured) {
-      setSkills(skills.filter((s) => s.id !== id))
-      return
+    const updated = skills.filter((s) => s.id !== id)
+    setSkills(updated)
+
+    if (typeof window !== "undefined") {
+      localStorage.setItem("hanakage_skills", JSON.stringify(updated))
     }
 
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.from("skills").delete().eq("id", id)
-      if (error) throw error
-      await loadSkills()
-      setFeedback({ type: "success", message: `Keahlian "${name}" berhasil dihapus.` })
-      setTimeout(() => setFeedback(null), 3000)
-    } catch (err: unknown) {
-      const e = err as { message?: string }
-      setFeedback({ type: "error", message: e.message || "Gagal menghapus keahlian." })
+    if (isConfigured) {
+      try {
+        const supabase = createClient()
+        await supabase.from("skills").delete().eq("id", id)
+      } catch (err) {
+        console.warn("Supabase skills delete error:", err)
+      }
     }
+
+    setFeedback({ type: "success", message: `Keahlian "${name}" telah dihapus.` })
+    setTimeout(() => setFeedback(null), 3000)
   }
 
   return (

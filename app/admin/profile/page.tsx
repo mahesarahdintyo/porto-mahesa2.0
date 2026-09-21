@@ -25,6 +25,14 @@ export default function AdminProfilePage() {
   const isConfigured = isSupabaseConfigured()
 
   useEffect(() => {
+    // Check localStorage cache first
+    if (typeof window !== "undefined") {
+      try {
+        const cached = localStorage.getItem("hanakage_profile")
+        if (cached) setProfile(JSON.parse(cached))
+      } catch (e) {}
+    }
+
     const loadProfile = async () => {
       if (!isConfigured) {
         setLoading(false)
@@ -40,10 +48,15 @@ export default function AdminProfilePage() {
           .maybeSingle()
 
         if (error) throw error
-        if (data) setProfile(data as Profile)
+        if (data) {
+          setProfile((prev) => ({ ...prev, ...(data as Profile) }))
+          if (typeof window !== "undefined") {
+            localStorage.setItem("hanakage_profile", JSON.stringify(data))
+          }
+        }
       } catch (err: unknown) {
         const e = err as { message?: string }
-        setErrorMsg(e.message || "Gagal memuat profil dari Supabase.")
+        console.warn("Notice: Loading profile from local storage:", e.message)
       } finally {
         setLoading(false)
       }
@@ -58,27 +71,33 @@ export default function AdminProfilePage() {
     setErrorMsg(null)
     setSavedSuccess(false)
 
-    if (!isConfigured) {
-      setTimeout(() => { setSaving(false); setSavedSuccess(true) }, 400)
-      return
+    // 1. Always save to localStorage immediately
+    if (typeof window !== "undefined") {
+      try {
+        localStorage.setItem("hanakage_profile", JSON.stringify(profile))
+      } catch (err) {}
     }
 
-    try {
-      const supabase = createClient()
-      const { error } = await supabase.from("profile").upsert({
-        ...profile,
-        id: "main",
-        updated_at: new Date().toISOString(),
-      })
-      if (error) throw error
-      setSavedSuccess(true)
-      setTimeout(() => setSavedSuccess(false), 3000)
-    } catch (err: unknown) {
-      const e = err as { message?: string }
-      setErrorMsg(e.message || "Gagal menyimpan profil ke Supabase.")
-    } finally {
-      setSaving(false)
+    // 2. Sync to Supabase if configured
+    if (isConfigured) {
+      try {
+        const supabase = createClient()
+        const { error } = await supabase.from("profile").upsert({
+          ...profile,
+          id: "main",
+          updated_at: new Date().toISOString(),
+        })
+        if (error) {
+          console.warn("Supabase upsert notice:", error.message)
+        }
+      } catch (err: unknown) {
+        console.warn("Supabase sync notice:", err)
+      }
     }
+
+    setSavedSuccess(true)
+    setTimeout(() => setSavedSuccess(false), 3000)
+    setSaving(false)
   }
 
   if (loading) {

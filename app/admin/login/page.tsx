@@ -161,7 +161,7 @@ export default function AdminLoginPage() {
                 setError(null)
                 setSuccessMsg(null)
               }}
-              className="text-amber-400 hover:underline hover:text-amber-300"
+              className="text-amber-400 hover:underline hover:text-amber-300 cursor-pointer"
             >
               {isSignUp ? "Masuk di sini" : "Buat akun admin"}
             </button>
