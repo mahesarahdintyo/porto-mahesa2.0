@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react"
 import { useHanakageTheme } from "./theme-provider"
 import { usePortfolioData } from "./portfolio-data-provider"
 import { playZenSound } from "@/lib/sound"
-import { X, ArrowUp, ExternalLink } from "lucide-react"
+import { X, ArrowUp } from "lucide-react"
 import { HeroSection } from "./hero-section"
 import { AboutSection } from "./about-section"
 import { SkillsSection } from "./skills-section"
@@ -49,7 +49,6 @@ export function ShrineChamberModal({
   const isClosingRef = useRef(false)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
   const isManualScrollRef = useRef(false)
-  const initialScrollDoneRef = useRef(false)
 
   // Handle opening Shoji slide animation
   useEffect(() => {
@@ -59,7 +58,7 @@ export function ShrineChamberModal({
       playZenSound("shoji", isDark)
       const timer = setTimeout(() => {
         setDoorsOpen(true)
-      }, 50)
+      }, 40)
       return () => clearTimeout(timer)
     }
   }, [activeShrine, isDark])
@@ -77,7 +76,7 @@ export function ShrineChamberModal({
             isManualScrollRef.current = false
           }, 800)
         }
-      }, 300)
+      }, 250)
       return () => clearTimeout(timer)
     }
   }, [activeShrine])
@@ -91,11 +90,10 @@ export function ShrineChamberModal({
     setTimeout(() => {
       onClose()
       isClosingRef.current = false
-      initialScrollDoneRef.current = false
-    }, 450)
+    }, 400)
   }
 
-  // Close on ESC key or navigate with Arrow keys
+  // Close on ESC key
   useEffect(() => {
     if (!activeShrine) return
 
@@ -120,29 +118,42 @@ export function ShrineChamberModal({
       element.scrollIntoView({ behavior: "smooth", block: "start" })
       setTimeout(() => {
         isManualScrollRef.current = false
-      }, 800)
+      }, 700)
     }
   }
 
-  // ScrollSpy: observe scroll position inside container
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    if (isManualScrollRef.current) return
-    const container = e.currentTarget
-    const scrollPos = container.scrollTop + 220
+  // Zero-lag asynchronous ScrollSpy using IntersectionObserver
+  useEffect(() => {
+    if (!doorsOpen) return
+    const container = scrollContainerRef.current
+    if (!container) return
 
-    for (let i = SHRINES.length - 1; i >= 0; i--) {
-      const shrine = SHRINES[i]
-      const el = document.getElementById(`shrine-section-${shrine.id}`)
-      if (el) {
-        if (el.offsetTop <= scrollPos) {
-          if (activeSection !== shrine.id) {
-            setActiveSection(shrine.id)
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isManualScrollRef.current) return
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute("data-shrine-id") as ShrineId
+            if (id) {
+              setActiveSection(id)
+            }
           }
-          break
-        }
+        })
+      },
+      {
+        root: container,
+        rootMargin: "-15% 0px -65% 0px",
+        threshold: 0,
       }
-    }
-  }
+    )
+
+    SHRINES.forEach((s) => {
+      const el = document.getElementById(`shrine-section-${s.id}`)
+      if (el) observer.observe(el)
+    })
+
+    return () => observer.disconnect()
+  }, [doorsOpen])
 
   if (!activeShrine) return null
 
@@ -153,7 +164,7 @@ export function ShrineChamberModal({
       role="dialog"
       aria-modal="true"
       aria-label="Balairung Kuil Hanakage"
-      className="fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden transition-opacity duration-300 select-none"
+      className="fixed inset-0 z-50 flex flex-col w-screen h-screen overflow-hidden select-none"
       style={{
         background: "var(--bg-base)",
       }}
@@ -216,13 +227,13 @@ export function ShrineChamberModal({
             1. DESKTOP STICKY ZEN SIDEBAR (Left Panel)
             ======================================================== */}
         <aside
-          className="hidden md:flex flex-col justify-between w-72 lg:w-80 border-r shrink-0 p-6 select-none backdrop-blur-md"
+          className="hidden md:flex flex-col justify-between w-72 lg:w-80 border-r shrink-0 p-6 select-none"
           style={{
             borderColor: "var(--border-color)",
-            background: isDark ? "rgba(18, 16, 14, 0.95)" : "rgba(251, 245, 234, 0.95)",
+            background: isDark ? "#12100e" : "#fbf5ea",
           }}
         >
-          {/* Top Brand / Profile Card */}
+          {/* Top Brand / Profile Card (Without UI/UX & Web Dev badge boxes) */}
           <div className="space-y-3">
             <div
               className="inline-flex items-center gap-2 px-3 py-1 rounded-full border text-[10px] font-mono uppercase tracking-widest"
@@ -243,18 +254,9 @@ export function ShrineChamberModal({
               >
                 {profile?.name || "Mahesa"}
               </h2>
-              <p className="text-xs opacity-60 font-mono mt-0.5" style={{ color: "var(--text-muted)" }}>
+              <p className="text-xs opacity-60 font-mono mt-1" style={{ color: "var(--text-muted)" }}>
                 {profile?.title || "Perancang & Pengembang Antarmuka"}
               </p>
-            </div>
-
-            <div className="flex flex-wrap gap-1.5 pt-1">
-              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded border border-current/20 opacity-70">
-                UI/UX Designer
-              </span>
-              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded border border-current/20 opacity-70">
-                Web Developer
-              </span>
             </div>
           </div>
 
@@ -272,9 +274,9 @@ export function ShrineChamberModal({
                   <button
                     key={s.id}
                     onClick={() => scrollToSection(s.id)}
-                    className={`w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-left transition-all duration-200 cursor-pointer ${
+                    className={`w-full group flex items-center justify-between px-3.5 py-2.5 rounded-xl border text-left transition-all duration-150 cursor-pointer ${
                       isActive
-                        ? "shadow-md scale-[1.02]"
+                        ? "shadow-sm font-semibold"
                         : "opacity-65 hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/5 border-transparent"
                     }`}
                     style={{
@@ -285,8 +287,8 @@ export function ShrineChamberModal({
                         : "transparent",
                       background: isActive
                         ? isDark
-                          ? "rgba(122, 111, 163, 0.2)"
-                          : "rgba(178, 58, 46, 0.12)"
+                          ? "rgba(122, 111, 163, 0.18)"
+                          : "rgba(178, 58, 46, 0.1)"
                         : "transparent",
                       color: "var(--text-primary)",
                     }}
@@ -313,7 +315,7 @@ export function ShrineChamberModal({
                         {s.kanji}
                       </span>
                       <div>
-                        <div className="text-xs font-bold tracking-wide">
+                        <div className="text-xs tracking-wide">
                           {s.name}
                         </div>
                         <p className="text-[10px] font-mono opacity-50 line-clamp-1">
@@ -367,8 +369,8 @@ export function ShrineChamberModal({
             2. MOBILE STICKY TOP NAVIGATION BAR
             ======================================================== */}
         <div
-          className="md:hidden sticky top-0 z-30 px-4 py-2.5 border-b flex items-center justify-between backdrop-blur-md shrink-0"
-          style={{ borderColor: "var(--border-color)", background: "var(--card-bg)" }}
+          className="md:hidden sticky top-0 z-30 px-4 py-2.5 border-b flex items-center justify-between shrink-0"
+          style={{ borderColor: "var(--border-color)", background: isDark ? "#12100e" : "#fbf5ea" }}
         >
           <div className="flex items-center gap-2">
             <span
@@ -414,15 +416,24 @@ export function ShrineChamberModal({
 
         {/* ========================================================
             3. MAIN CONTINUOUS SCROLLABLE CONTENT (Right Panel)
+               - Ultra-smooth native scrolling (no forced reflow on scroll)
             ======================================================== */}
         <div
           ref={scrollContainerRef}
-          onScroll={handleScroll}
-          className="flex-1 h-full overflow-y-auto emaki-scrollable scroll-smooth select-text"
+          className="flex-1 h-full overflow-y-auto emaki-scrollable select-text"
+          style={{
+            contain: "paint",
+            willChange: "scroll-position",
+          }}
         >
           <div className="max-w-4xl xl:max-w-5xl mx-auto px-4 sm:px-8 md:px-12 py-10 md:py-16 space-y-20 sm:space-y-28">
             {/* 1. HERO SECTION (01 壱・始) */}
-            <section id="shrine-section-hero" className="scroll-mt-8">
+            <section
+              id="shrine-section-hero"
+              data-shrine-id="hero"
+              className="scroll-mt-8"
+              style={{ contain: "content" }}
+            >
               <HeroSection onNavigate={(s) => scrollToSection(s)} />
             </section>
 
@@ -434,7 +445,12 @@ export function ShrineChamberModal({
             </div>
 
             {/* 2. ABOUT SECTION (02 弐・影) */}
-            <section id="shrine-section-about" className="scroll-mt-8">
+            <section
+              id="shrine-section-about"
+              data-shrine-id="about"
+              className="scroll-mt-8"
+              style={{ contain: "content" }}
+            >
               <AboutSection />
             </section>
 
@@ -446,7 +462,12 @@ export function ShrineChamberModal({
             </div>
 
             {/* 3. SKILLS SECTION (03 参・印) */}
-            <section id="shrine-section-skills" className="scroll-mt-8">
+            <section
+              id="shrine-section-skills"
+              data-shrine-id="skills"
+              className="scroll-mt-8"
+              style={{ contain: "content" }}
+            >
               <SkillsSection />
             </section>
 
@@ -458,7 +479,12 @@ export function ShrineChamberModal({
             </div>
 
             {/* 4. PROJECTS SECTION (04 四・卷) */}
-            <section id="shrine-section-projects" className="scroll-mt-8">
+            <section
+              id="shrine-section-projects"
+              data-shrine-id="projects"
+              className="scroll-mt-8"
+              style={{ contain: "content" }}
+            >
               <ProjectsSection />
             </section>
 
@@ -470,7 +496,12 @@ export function ShrineChamberModal({
             </div>
 
             {/* 5. CONTACT SECTION (05 五・結) */}
-            <section id="shrine-section-contact" className="scroll-mt-8 pb-16">
+            <section
+              id="shrine-section-contact"
+              data-shrine-id="contact"
+              className="scroll-mt-8 pb-16"
+              style={{ contain: "content" }}
+            >
               <ContactSection />
             </section>
 

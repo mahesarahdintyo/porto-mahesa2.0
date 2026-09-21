@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import Link from "next/link"
 import { useHanakageTheme } from "./theme-provider"
 import { usePortfolioData } from "./portfolio-data-provider"
@@ -88,8 +88,8 @@ function CelestialConstellation({
         </filter>
       </defs>
 
-      {/* Central Torii Sacred Star Anchor - only visible when a shrine is hovered */}
-      {hoveredShrine && (
+      {/* Central Torii Sacred Star Anchor - only visible when hovering the Torii (hero) itself */}
+      {hoveredShrine === "hero" && (
         <g transform="translate(500, 270)">
           <circle
             cx="0"
@@ -218,17 +218,20 @@ export function ShrineCourtyard() {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 })
   const [introKey, setIntroKey] = useState(0)
   const [showIntro, setShowIntro] = useState(true)
+  const activeShrineRef = useRef(activeShrine)
+  activeShrineRef.current = activeShrine
 
   const triggerIntroReplay = () => {
     setIntroKey((k) => k + 1)
     setShowIntro(true)
   }
 
-  // Parallax tilt based on cursor
+  // Parallax tilt based on cursor (paused when chamber modal is active to ensure silky smooth 120 FPS scrolling)
   useEffect(() => {
     setMounted(true)
 
     function handleMouseMove(e: MouseEvent) {
+      if (activeShrineRef.current) return
       const x = (e.clientX / window.innerWidth - 0.5) * 20
       const y = (e.clientY / window.innerHeight - 0.5) * 15
       setMouseOffset({ x, y })
