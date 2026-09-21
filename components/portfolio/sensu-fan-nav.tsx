@@ -11,11 +11,12 @@ interface SensuFanNavProps {
 }
 
 const BLADES = [
-  { id: "hero" as ShrineId, kanji: "始", title: "Beranda", angle: -50 },
-  { id: "about" as ShrineId, kanji: "影", title: "Tentang", angle: -25 },
-  { id: "skills" as ShrineId, kanji: "印", title: "Keahlian", angle: 0 },
-  { id: "projects" as ShrineId, kanji: "卷", title: "Karya", angle: 25 },
-  { id: "contact" as ShrineId, kanji: "結", title: "Kontak", angle: 50 },
+  { id: "hero" as ShrineId, kanji: "始", title: "Home", angle: -50 },
+  { id: "about" as ShrineId, kanji: "影", title: "About Me", angle: -30 },
+  { id: "experience" as ShrineId, kanji: "歩", title: "Experience", angle: -10 },
+  { id: "projects" as ShrineId, kanji: "卷", title: "Projects", angle: 10 },
+  { id: "skills" as ShrineId, kanji: "印", title: "Skills", angle: 30 },
+  { id: "contact" as ShrineId, kanji: "結", title: "Contact", angle: 50 },
 ]
 
 export function SensuFanNav({ onSelectShrine, activeShrine }: SensuFanNavProps) {
@@ -42,7 +43,7 @@ export function SensuFanNav({ onSelectShrine, activeShrine }: SensuFanNavProps) 
 
   return (
     <nav
-      aria-label="Navigasi Kipas Sensu"
+      aria-label="Sensu Fan Navigation"
       style={{
         position: "fixed",
         bottom: 24,
@@ -101,7 +102,7 @@ export function SensuFanNav({ onSelectShrine, activeShrine }: SensuFanNavProps) 
                   boxShadow: "0 4px 10px rgba(0,0,0,0.18)",
                   cursor: "pointer",
                   pointerEvents: "auto",
-                  zIndex: 5 - idx,
+                  zIndex: 6 - idx,
                   transition: "transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
                   transitionDelay: `${idx * 35}ms`,
                 }}
@@ -138,7 +139,7 @@ export function SensuFanNav({ onSelectShrine, activeShrine }: SensuFanNavProps) 
       <button
         type="button"
         onClick={toggleFan}
-        aria-label={isOpen ? "Tutup Kipas Navigasi" : "Buka Kipas Navigasi (扇子)"}
+        aria-label={isOpen ? "Close Sensu Navigation" : "Open Sensu Navigation (扇子)"}
         aria-expanded={isOpen}
         style={{
           display: "flex",
@@ -168,7 +169,7 @@ export function SensuFanNav({ onSelectShrine, activeShrine }: SensuFanNavProps) 
             color: isDark ? "#d3c8f5" : "#5a1f18",
           }}
         >
-          {isOpen ? "Tutup 扇子" : "Navigasi 扇子"}
+          {isOpen ? "Close 扇子" : "Sensu Fan"}
         </span>
       </button>
     </nav>

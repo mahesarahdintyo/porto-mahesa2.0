@@ -1,16 +1,17 @@
 "use client"
 
 const LINKS = [
-  { href: "#about", label: "Tentang" },
-  { href: "#skills", label: "Keahlian" },
-  { href: "#projects", label: "Karya" },
-  { href: "#contact", label: "Kontak" },
+  { href: "#about", label: "About Me" },
+  { href: "#experience", label: "Experience" },
+  { href: "#projects", label: "Projects" },
+  { href: "#skills", label: "Skills" },
+  { href: "#contact", label: "Contact" },
 ]
 
 export function SiteNav() {
   return (
     <nav
-      aria-label="Navigasi utama"
+      aria-label="Main navigation"
       className="fixed top-5 left-5 z-50 flex items-center gap-5 text-sm"
       style={{ fontFamily: "var(--font-heading)" }}
     >

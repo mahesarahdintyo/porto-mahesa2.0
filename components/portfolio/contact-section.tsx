@@ -34,7 +34,7 @@ export function ContactSection() {
         setSubmitted(true)
       } catch (err: unknown) {
         console.error("Failed to send message to Supabase:", err)
-        setErrorMsg("Gagal mengirim pesan. Silakan coba lagi sebentar lagi.")
+        setErrorMsg("Failed to send message. Please try again shortly.")
       } finally {
         setSubmitting(false)
       }
@@ -50,27 +50,27 @@ export function ContactSection() {
   return (
     <section id="contact" className="hanakage-section pb-32">
       <div ref={revealRef} className="hanakage-reveal max-w-xl">
-        <p className="hanakage-eyebrow mb-4">Kontak</p>
+        <p className="hanakage-eyebrow mb-4">Contact</p>
         <h2 className="hanakage-heading text-4xl md:text-5xl mb-6">
-          {isDark ? "Panggil dari Kegelapan" : "Tulis Sepucuk Surat"}
+          {isDark ? "Call from the Shadows" : "Send a Message"}
         </h2>
         <BrushDivider />
         <p className="hanakage-body-text mb-8">
           {isDark
-            ? "Jika ada sesuatu yang ingin Anda bisikkan, kirimkan pesan — saya akan mendengarnya."
-            : "Punya proyek atau sekadar ingin menyapa? Kirimkan pesan, saya akan membalas secepat kelopak jatuh."}
+            ? "If there is something you wish to whisper into the dark, leave a message — I will listen."
+            : "Have an idea, project, or simply want to connect? Send a message, and I'll reply as swiftly as falling petals."}
         </p>
 
         {submitted ? (
           <div className="p-4 border border-current/20 hanakage-torn">
             <p className="hanakage-body-text font-medium" role="status">
-              {isDark ? "Bisikan Anda telah diterima di kegelapan." : "Suratmu telah terkirim. Terima kasih!"}
+              {isDark ? "Your whisper has been received in the dark." : "Your message has been sent. Thank you!"}
             </p>
             <button
               onClick={() => setSubmitted(false)}
               className="mt-4 text-xs underline opacity-70 hover:opacity-100"
             >
-              Kirim pesan lain
+              Send another message
             </button>
           </div>
         ) : (
@@ -82,7 +82,7 @@ export function ContactSection() {
             )}
             <div className="flex flex-col gap-1.5">
               <label htmlFor="name" className="text-sm hanakage-body-text">
-                Nama
+                Name
               </label>
               <input
                 id="name"
@@ -108,7 +108,7 @@ export function ContactSection() {
             </div>
             <div className="flex flex-col gap-1.5">
               <label htmlFor="message" className="text-sm hanakage-body-text">
-                Pesan
+                Message
               </label>
               <textarea
                 id="message"
@@ -124,7 +124,7 @@ export function ContactSection() {
               disabled={submitting}
               className="hanakage-btn self-start mt-2 disabled:opacity-50"
             >
-              {submitting ? "Mengirim..." : "Kirim"}
+              {submitting ? "Sending..." : "Send Message"}
             </button>
           </form>
         )}
