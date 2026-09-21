@@ -128,7 +128,20 @@ export function ParticleCanvas() {
     }
     window.addEventListener("hanakage:wind", handleWindGust)
 
+    // Pause when shrine chamber modal is open — particles hidden behind it anyway
+    let paused = false
+    const modalObserver = new MutationObserver(() => {
+      paused = !!document.querySelector("[role='dialog']")
+    })
+    modalObserver.observe(document.body, { childList: true, subtree: false })
+
     function frame(now: number) {
+      // Skip drawing while modal is open — frees main thread for smooth scroll
+      if (paused) {
+        rafId = requestAnimationFrame(frame)
+        return
+      }
+
       const dt = Math.min(now - last, 48)
       last = now
       windTimer += dt
@@ -166,7 +179,7 @@ export function ParticleCanvas() {
         const sway = Math.sin(t * p.swaySpeed + p.swayOffset) * (isDark ? 0.25 : 0.55)
         p.x += p.vx + sway + windGust
         p.y += p.vy
-        p.rotation += p.rotationSpeed + (isDark ? 0 : 0)
+        p.rotation += p.rotationSpeed
 
         if (p.y > height + 40) {
           p.y = -40
@@ -178,14 +191,11 @@ export function ParticleCanvas() {
         if (p.x > width + 40) p.x = -40
         if (p.x < -40) p.x = width + 40
 
-        const depthAlpha = p.layer === 0 ? 0.55 : p.layer === 1 ? 0.8 : 1
+        const depthAlpha = p.layer === 0 ? 0.38 : p.layer === 1 ? 0.72 : 1
         safeCtx.save()
         safeCtx.globalAlpha = depthAlpha
         safeCtx.translate(p.x, p.y)
         safeCtx.rotate(p.rotation)
-        if (p.layer === 0 && !p.ember) {
-          safeCtx.filter = "blur(1px)"
-        }
 
         if (p.ember) {
           const glow = safeCtx.createRadialGradient(0, 0, 0, 0, 0, p.size * 1.8)
@@ -210,6 +220,7 @@ export function ParticleCanvas() {
 
     return () => {
       cancelAnimationFrame(rafId)
+      modalObserver.disconnect()
       window.removeEventListener("resize", resize)
       window.removeEventListener("pointermove", handlePointerMove)
       window.removeEventListener("pointerleave", handlePointerLeave)
