@@ -368,8 +368,9 @@ export function ShojiIntro({ onComplete }: ShojiIntroProps) {
           onMouseLeave={() => setCenterArtifactHovered(false)}
           onClick={(e) => {
             e.stopPropagation()
-            playZenSound("chime", isDark)
+            triggerSlash()
           }}
+          title={isDark ? "Slash the seal to enter" : "Buka gerbang / Tebas segel"}
         >
           {/* Rotating Sumi-e Ensō Aura on hover (Same game-like feedback as courtyard Torii) */}
           {centerArtifactHovered && (
