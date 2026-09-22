@@ -774,4 +774,62 @@ html.hanakage-flicker {
   }
 }
 
+/* Sacred Shoji Gate Intro Decorations Keyframes */
+@keyframes hanakage-lantern-sway-left {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(2.2deg);
+  }
+  100% {
+    transform: rotate(-1.8deg);
+  }
+}
+
+@keyframes hanakage-lantern-sway-right {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-2.2deg);
+  }
+  100% {
+    transform: rotate(1.8deg);
+  }
+}
+
+@keyframes hanakage-lantern-flicker {
+  0%, 100% {
+    opacity: 0.85;
+    filter: drop-shadow(0 0 10px var(--lantern-glow));
+  }
+  30% {
+    opacity: 0.65;
+    filter: drop-shadow(0 0 6px var(--lantern-glow));
+  }
+  70% {
+    opacity: 0.95;
+    filter: drop-shadow(0 0 14px var(--lantern-glow));
+  }
+}
+
+@keyframes hanakage-intro-petal {
+  0% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.7;
+  }
+  85% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(80px, 120px, 0) rotate(160deg);
+    opacity: 0;
+  }
+}
+
+
 
