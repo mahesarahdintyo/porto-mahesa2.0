@@ -831,5 +831,46 @@ html.hanakage-flicker {
   }
 }
 
+/* -------------------------------------------------------------------------
+   Shrine Courtyard: Game-like Interactivity Keyframes
+   ------------------------------------------------------------------------- */
 
+/* Gentle idle float for shrine artifacts */
+@keyframes hanakage-artifact-bob {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
 
+/* Ripple expand on artifact click */
+@keyframes hanakage-ripple-expand {
+  0%   { transform: scale(0.4); opacity: 0.9; }
+  60%  { opacity: 0.5; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+/* Courtyard sakura petal drift */
+@keyframes hanakage-courtyard-petal {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg);   opacity: 0; }
+  10%  { opacity: 0.75; }
+  85%  { opacity: 0.55; }
+  100% { transform: translate3d(60px, 140px, 0) rotate(200deg); opacity: 0; }
+}
+
+/* Onibi wisp drift for dark mode courtyard */
+@keyframes hanakage-courtyard-wisp {
+  0%   { transform: translateY(0px)   scale(1);    opacity: 0.7; }
+  33%  { transform: translateY(-14px) scale(1.1);  opacity: 0.95; }
+  66%  { transform: translateY(-5px)  scale(0.92); opacity: 0.75; }
+  100% { transform: translateY(0px)   scale(1);    opacity: 0.7; }
+}
+
+/* Subtle parallax shimmer for Karesansui background */
+@keyframes hanakage-karesansui-drift {
+  0%   { opacity: 0.18; }
+  50%  { opacity: 0.24; }
+  100% { opacity: 0.18; }
+}
+
+.hanakage-karesansui-ambient {
+  animation: hanakage-karesansui-drift 6s ease-in-out infinite;
+}
