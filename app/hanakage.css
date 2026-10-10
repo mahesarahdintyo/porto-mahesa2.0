@@ -874,3 +874,9 @@ html.hanakage-flicker {
 .hanakage-karesansui-ambient {
   animation: hanakage-karesansui-drift 6s ease-in-out infinite;
 }
+
+/* Fade-up entry animation used by skills grid on filter change */
+@keyframes hanakage-fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
