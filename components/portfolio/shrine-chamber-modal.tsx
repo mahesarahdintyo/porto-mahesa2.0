@@ -254,7 +254,7 @@ export function ShrineChamberModal({
                 className="text-2xl font-black uppercase tracking-tight font-serif"
                 style={{ color: "var(--text-primary)" }}
               >
-                {profile?.name || "Mahesa"}
+                {profile?.name || "Hanakage"}
               </h2>
               <p className="text-xs opacity-60 font-mono mt-1" style={{ color: "var(--text-muted)" }}>
                 {profile?.title || "Interface Designer & Developer"}
@@ -548,7 +548,7 @@ export function ShrineChamberModal({
               className="pt-8 border-t flex flex-col sm:flex-row items-center justify-between gap-4 text-xs opacity-60 font-mono select-none"
               style={{ borderColor: "var(--border-color)" }}
             >
-              <p>© 2026 {profile?.name || "Mahesa Rahdintyo"} — 花影神社</p>
+              <p>© 2026 {profile?.name || "Hanakage Portfolio"} — 花影神社</p>
 
               <div className="flex items-center gap-4">
                 <button

@@ -1,17 +1,17 @@
 -- ==========================================
--- SKEMA DATABASE SUPABASE UNTUK PORTO-MAHESA
+-- SKEMA DATABASE SUPABASE UNTUK HANAKAGE PORTFOLIO
 -- ==========================================
 -- Jalankan skrip ini di SQL Editor dashboard Supabase Anda.
 
 -- 1. TABEL PROFILE
 CREATE TABLE IF NOT EXISTS public.profile (
   id TEXT PRIMARY KEY DEFAULT 'main',
-  name TEXT NOT NULL DEFAULT 'Mahesa Rahdintyo',
+  name TEXT NOT NULL DEFAULT 'Portfolio Owner',
   title TEXT DEFAULT 'Perancang & Pengembang Antarmuka',
   intro_light TEXT DEFAULT 'Perancang & pengembang antarmuka yang hidup di antara dua musim — satu lembut seperti kelopak yang gugur, satu sunyi seperti bayangan yang berbisik.',
   intro_dark TEXT DEFAULT 'Bergerak dalam kesunyian kode, merajut estetika gelap dengan ketelitian struktural.',
-  email TEXT DEFAULT 'kontak@example.com',
-  github_url TEXT DEFAULT 'https://github.com/mahesarahdintyo',
+  email TEXT DEFAULT '',
+  github_url TEXT DEFAULT '',
   linkedin_url TEXT DEFAULT '',
   updated_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -58,6 +58,17 @@ CREATE TABLE IF NOT EXISTS public.messages (
   created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- 6. TABEL EXPERIENCES (Jejak Langkah & Pengalaman)
+CREATE TABLE IF NOT EXISTS public.experiences (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  role TEXT NOT NULL,
+  organization TEXT NOT NULL,
+  period TEXT NOT NULL,
+  description TEXT NOT NULL,
+  order_index INT DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
 -- ==========================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ==========================================
@@ -66,6 +77,7 @@ ALTER TABLE public.about ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.skills ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.experiences ENABLE ROW LEVEL SECURITY;
 
 -- Profile Policies: Publik hanya baca, Admin (Authenticated) bebas edit
 CREATE POLICY "Public profiles are viewable by everyone" ON public.profile FOR SELECT USING (true);
@@ -83,6 +95,10 @@ CREATE POLICY "Admin can manage skills" ON public.skills FOR ALL TO authenticate
 CREATE POLICY "Public projects are viewable by everyone" ON public.projects FOR SELECT USING (is_published = true);
 CREATE POLICY "Admin can manage projects" ON public.projects FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
+-- Experiences Policies
+CREATE POLICY "Public experiences are viewable by everyone" ON public.experiences FOR SELECT USING (true);
+CREATE POLICY "Admin can manage experiences" ON public.experiences FOR ALL TO authenticated USING (true) WITH CHECK (true);
+
 -- Messages Policies: Publik bisa mengirim pesan (INSERT), Admin bisa melihat & mengelola pesan
 CREATE POLICY "Public can send messages" ON public.messages FOR INSERT WITH CHECK (true);
 CREATE POLICY "Admin can manage messages" ON public.messages FOR ALL TO authenticated USING (true) WITH CHECK (true);
@@ -93,12 +109,12 @@ CREATE POLICY "Admin can manage messages" ON public.messages FOR ALL TO authenti
 INSERT INTO public.profile (id, name, title, intro_light, intro_dark, email, github_url)
 VALUES (
   'main',
-  'Mahesa Rahdintyo',
+  'Portfolio Owner',
   'Perancang & Pengembang Antarmuka',
   'Perancang & pengembang antarmuka yang hidup di antara dua musim — satu lembut seperti kelopak yang gugur, satu sunyi seperti bayangan yang berbisik.',
   'Bergerak dalam kesunyian kode, merajut estetika gelap dengan ketelitian struktural.',
-  'kontak@example.com',
-  'https://github.com/mahesarahdintyo'
+  '',
+  ''
 )
 ON CONFLICT (id) DO NOTHING;
 
@@ -128,8 +144,8 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO public.projects (title, description, tag, link_url, github_url, order_index, is_published)
 VALUES
-  ('Washi & Wire', 'Sistem desain untuk studio kerajinan tradisional dengan sentuhan digital modern.', 'Design System', '#', 'https://github.com/mahesarahdintyo', 1, true),
-  ('Kage no Niwa', 'Pengalaman web interaktif yang menggabungkan partikel fisika dengan narasi visual.', 'Interactive', '#', 'https://github.com/mahesarahdintyo', 2, true),
-  ('Tsuki Journal', 'Aplikasi jurnal minimalis dengan tema yang berubah sesuai waktu dan suasana.', 'Product', '#', 'https://github.com/mahesarahdintyo', 3, true),
-  ('Yoru no Kaze', 'Instalasi audio-visual yang merespons gerakan pengunjung secara real-time.', 'Experiment', '#', 'https://github.com/mahesarahdintyo', 4, true)
+  ('Washi & Wire', 'Sistem desain untuk studio kerajinan tradisional dengan sentuhan digital modern.', 'Design System', '#', '', 1, true),
+  ('Kage no Niwa', 'Pengalaman web interaktif yang menggabungkan partikel fisika dengan narasi visual.', 'Interactive', '#', '', 2, true),
+  ('Tsuki Journal', 'Aplikasi jurnal minimalis dengan tema yang berubah sesuai waktu dan suasana.', 'Product', '#', '', 3, true),
+  ('Yoru no Kaze', 'Instalasi audio-visual yang merespons gerakan pengunjung secara real-time.', 'Experiment', '#', '', 4, true)
 ON CONFLICT DO NOTHING;

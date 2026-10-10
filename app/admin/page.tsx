@@ -19,12 +19,14 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
+  Briefcase,
 } from "lucide-react"
 
 export default function AdminOverviewPage() {
   const [stats, setStats] = useState({
     projectsCount: 4,
     skillsCount: 10,
+    experiencesCount: 0,
     messagesCount: 0,
     unreadMessages: 0,
   })
@@ -41,8 +43,10 @@ export default function AdminOverviewPage() {
       try {
         const s = localStorage.getItem("hanakage_skills")
         const pr = localStorage.getItem("hanakage_projects")
+        const exp = localStorage.getItem("hanakage_experiences")
         if (s) setStats((prev) => ({ ...prev, skillsCount: JSON.parse(s).length }))
         if (pr) setStats((prev) => ({ ...prev, projectsCount: JSON.parse(pr).length }))
+        if (exp) setStats((prev) => ({ ...prev, experiencesCount: JSON.parse(exp).length }))
       } catch (e) {}
     }
 
@@ -54,9 +58,10 @@ export default function AdminOverviewPage() {
     const loadStats = async () => {
       try {
         const supabase = createClient()
-        const [projectsRes, skillsRes, messagesRes] = await Promise.all([
+        const [projectsRes, skillsRes, experiencesRes, messagesRes] = await Promise.all([
           supabase.from("projects").select("id", { count: "exact" }),
           supabase.from("skills").select("id", { count: "exact" }),
+          supabase.from("experiences").select("id", { count: "exact" }),
           supabase
             .from("messages")
             .select("*")
@@ -66,12 +71,13 @@ export default function AdminOverviewPage() {
         const messages = messagesRes.data || []
         const unread = messages.filter((m) => !m.is_read).length
 
-        setStats({
-          projectsCount: projectsRes.count !== null ? projectsRes.count : stats.projectsCount,
-          skillsCount: skillsRes.count !== null ? skillsRes.count : stats.skillsCount,
+        setStats((prev) => ({
+          projectsCount: projectsRes.count !== null ? projectsRes.count : prev.projectsCount,
+          skillsCount: skillsRes.count !== null ? skillsRes.count : prev.skillsCount,
+          experiencesCount: experiencesRes.count !== null ? experiencesRes.count : prev.experiencesCount,
           messagesCount: messages.length,
           unreadMessages: unread,
-        })
+        }))
         setRecentMessages(messages.slice(0, 4))
       } catch (err) {
         console.error("Failed to load dashboard stats:", err)
@@ -98,7 +104,7 @@ export default function AdminOverviewPage() {
             Pusat Kendali Hanakage
           </h1>
           <p className="text-sm text-zinc-400 mt-1 font-mono">
-            Kelola dan perbarui seluruh konten dari 5 kuil sakral portofolio Anda
+            Kelola dan perbarui seluruh konten dari 6 kuil sakral portofolio Anda
           </p>
         </div>
 
@@ -118,13 +124,13 @@ export default function AdminOverviewPage() {
         </div>
       </div>
 
-      {/* Grid Menu: 5 Sacred Shrines of the Portfolio */}
+      {/* Grid Menu: Sacred Shrines of the Portfolio */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold tracking-wider text-zinc-400 font-mono uppercase">
             Pilih Bagian yang Ingin Diedit
           </h2>
-          <span className="text-xs text-zinc-500 font-mono">5 Kuil / Bagian</span>
+          <span className="text-xs text-zinc-500 font-mono">6 Kuil Sakral / Bagian</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -182,7 +188,39 @@ export default function AdminOverviewPage() {
             </div>
           </Link>
 
-          {/* 3. Projects */}
+          {/* 3. Experience */}
+          <Link
+            href="/admin/experience"
+            className="group p-5 bg-zinc-900/60 border border-zinc-800/80 hover:border-amber-500/50 rounded-xl transition-all duration-200 hover:bg-zinc-900 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between text-zinc-400 mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="w-7 h-7 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center font-bold text-xs text-amber-400 font-serif">
+                    歩
+                  </span>
+                  <span className="text-[11px] font-mono text-zinc-500">Batu Pijakan (Ayumi)</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold font-mono px-2 py-0.5 rounded-full bg-zinc-800 text-zinc-300">
+                    {stats.experiencesCount} Jejak
+                  </span>
+                  <ArrowUpRight className="w-4 h-4 text-zinc-600 group-hover:text-amber-400 transition-colors" />
+                </div>
+              </div>
+              <div className="font-serif text-lg font-bold text-zinc-100 group-hover:text-amber-300 transition-colors">
+                Pengalaman (Experience)
+              </div>
+              <p className="text-xs text-zinc-400 font-mono mt-1.5 leading-relaxed">
+                Kelola riwayat perjalanan karir, peran profesional, magang, dan pencapaian jejak langkah Anda.
+              </p>
+            </div>
+            <div className="mt-4 pt-3 border-t border-zinc-800/60 flex items-center text-xs font-mono text-amber-400/80 group-hover:text-amber-300">
+              <span>Kelola Daftar Pengalaman →</span>
+            </div>
+          </Link>
+
+          {/* 4. Projects */}
           <Link
             href="/admin/projects"
             className="group p-5 bg-zinc-900/60 border border-zinc-800/80 hover:border-amber-500/50 rounded-xl transition-all duration-200 hover:bg-zinc-900 flex flex-col justify-between"

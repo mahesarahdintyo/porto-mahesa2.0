@@ -47,3 +47,13 @@ export interface Message {
   is_read: boolean
   created_at: string
 }
+
+export interface Experience {
+  id: string
+  role: string
+  organization: string
+  period: string
+  description: string
+  order_index: number
+  created_at?: string
+}

@@ -2,37 +2,14 @@
 
 import { useScrollReveal } from "./use-scroll-reveal"
 import { BrushDivider } from "./motifs"
-
-interface ExperienceItem {
-  role: string
-  organization: string
-  period: string
-  description: string
-}
-
-// Static placeholder data — replace via admin panel / Supabase later
-const EXPERIENCES: ExperienceItem[] = [
-  {
-    role: "Fullstack Developer",
-    organization: "Freelance / Personal Projects",
-    period: "2023 — Present",
-    description:
-      "Designing and developing end-to-end web applications using Next.js, TypeScript, and Supabase. Crafting interactive UI experiences with a focus on performance, accessibility, and aesthetic detail.",
-  },
-  {
-    role: "Frontend Developer Intern",
-    organization: "Company / Organization Name",
-    period: "Month Year — Month Year",
-    description:
-      "Collaborated with the design team to implement responsive interfaces. Contributed to codebase improvements, component library development, and UI consistency across the platform.",
-  },
-]
+import { usePortfolioData } from "./portfolio-data-provider"
+import type { Experience } from "@/lib/supabase/types"
 
 function ExperienceCard({
   item,
   index,
 }: {
-  item: ExperienceItem
+  item: Experience
   index: number
 }) {
   const revealRef = useScrollReveal<HTMLDivElement>()
@@ -64,7 +41,7 @@ function ExperienceCard({
         className="w-full h-px opacity-20"
         style={{ background: "var(--text-muted)" }}
       />
-      <p className="hanakage-body-text text-sm leading-relaxed">
+      <p className="hanakage-body-text text-sm leading-relaxed whitespace-pre-line">
         {item.description}
       </p>
     </div>
@@ -73,6 +50,7 @@ function ExperienceCard({
 
 export function ExperienceSection() {
   const revealRef = useScrollReveal<HTMLDivElement>()
+  const { experiences } = usePortfolioData()
 
   return (
     <section id="experience" className="hanakage-section">
@@ -84,10 +62,17 @@ export function ExperienceSection() {
         <BrushDivider />
       </div>
       <div className="flex flex-col gap-6 mt-8">
-        {EXPERIENCES.map((item, index) => (
-          <ExperienceCard key={index} item={item} index={index} />
-        ))}
+        {experiences.length === 0 ? (
+          <div className="py-12 px-6 text-center border border-dashed rounded-xl border-stone-500/20 opacity-60 text-sm hanakage-body-text">
+            Belum ada riwayat pengalaman yang ditambahkan.
+          </div>
+        ) : (
+          experiences.map((item, index) => (
+            <ExperienceCard key={item.id || index} item={item} index={index} />
+          ))
+        )}
       </div>
     </section>
   )
 }
+

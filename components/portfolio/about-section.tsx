@@ -176,9 +176,15 @@ function GitHubHeatmap({ contributions, isDark }: { contributions: Contribution[
 // ─────────────────────────────────────────────
 export function AboutSection() {
   const revealRef = useScrollReveal<HTMLDivElement>()
-  const { about, loading, skills, projects } = usePortfolioData()
+  const { about, loading, skills, projects, profile } = usePortfolioData()
   const { theme } = useHanakageTheme()
   const isDark = theme === "yurei"
+
+  // GitHub username derived dynamically from profile
+  const githubUrl = profile?.github_url || ""
+  const githubUsername = githubUrl
+    ? githubUrl.replace(/^https?:\/\/(www\.)?github\.com\/?/, "").replace(/\/$/, "")
+    : ""
 
   // Stats visibility trigger (IntersectionObserver on the stats row)
   const statsRef = useRef<HTMLDivElement>(null)
@@ -198,11 +204,15 @@ export function AboutSection() {
   const [ghData, setGhData] = useState<GitHubData | null>(null)
   const [ghLoading, setGhLoading] = useState(true)
   useEffect(() => {
-    fetch("https://github-contributions-api.jogruber.de/v4/mahesarahdintyo?y=last")
+    if (!githubUsername) {
+      setGhLoading(false)
+      return
+    }
+    fetch(`https://github-contributions-api.jogruber.de/v4/${githubUsername}?y=last`)
       .then((r) => r.json())
       .then((d) => { setGhData(d); setGhLoading(false) })
       .catch(() => setGhLoading(false))
-  }, [])
+  }, [githubUsername])
 
   // Derived stats
   const totalContributions = ghData?.total?.lastYear ?? 0
@@ -377,18 +387,20 @@ export function AboutSection() {
               </div>
 
               {/* GitHub handle link */}
-              <div className="mt-4 pt-4 border-t flex items-center justify-between" style={{ borderColor: "var(--border-color)" }}>
-                <span className="text-xs font-mono opacity-50">@mahesarahdintyo</span>
-                <a
-                  href="https://github.com/mahesarahdintyo"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs font-mono flex items-center gap-1 hover:underline transition-opacity opacity-60 hover:opacity-100"
-                  style={{ color: accentColor }}
-                >
-                  View on GitHub →
-                </a>
-              </div>
+              {githubUsername && (
+                <div className="mt-4 pt-4 border-t flex items-center justify-between" style={{ borderColor: "var(--border-color)" }}>
+                  <span className="text-xs font-mono opacity-50">@{githubUsername}</span>
+                  <a
+                    href={githubUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-mono flex items-center gap-1 hover:underline transition-opacity opacity-60 hover:opacity-100"
+                    style={{ color: accentColor }}
+                  >
+                    View on GitHub →
+                  </a>
+                </div>
+              )}
             </>
           ) : (
             <p className="text-sm opacity-40 text-center py-6 font-mono">Could not load activity data.</p>
