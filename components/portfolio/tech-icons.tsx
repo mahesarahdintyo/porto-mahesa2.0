@@ -38,11 +38,11 @@ export function TechIcon({ name, className = "w-6 h-6", size = 24 }: TechIconPro
         <defs>
           <linearGradient id="next_grad" x1="109" y1="116.5" x2="144.5" y2="160.5" gradientUnits="userSpaceOnUse">
             <stop stopColor="white" />
-            <stop offset="1" stopColor="white" stopOpacity="0" />
+            <stop offset="1" stopColor="white" />
           </linearGradient>
           <linearGradient id="next_grad2" x1="121" y1="54" x2="120.799" y2="106.875" gradientUnits="userSpaceOnUse">
             <stop stopColor="white" />
-            <stop offset="1" stopColor="white" stopOpacity="0" />
+            <stop offset="1" stopColor="white" />
           </linearGradient>
         </defs>
       </svg>
@@ -75,6 +75,85 @@ export function TechIcon({ name, className = "w-6 h-6", size = 24 }: TechIconPro
     )
   }
 
+  // Python
+  if (norm.includes("python")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24">
+        <path
+          d="M11.91 2C6.98 2 7.29 4.14 7.29 4.14L7.3 6.35H12V7.07H4.37S2 6.8 2 11.75C2 16.7 4.1 16.48 4.1 16.48H5.64V14.28S5.56 11.66 8.28 11.66H12.92S15.44 11.66 15.44 9.17V4.54S15.82 2 11.91 2M9.1 3.29A.88.88 0 0 1 10 4.17A.88.88 0 0 1 9.1 5.06A.88.88 0 0 1 8.22 4.17A.88.88 0 0 1 9.1 3.29M12.09 22C17.02 22 16.71 19.86 16.71 19.86L16.7 17.65H12V16.93H19.63S22 17.2 22 12.25C22 7.3 19.9 7.52 19.9 7.52H18.36V9.72S18.44 12.34 15.72 12.34H11.08S8.56 12.34 8.56 14.83V19.46S8.18 22 12.09 22M14.9 20.71A.88.88 0 0 1 14 19.83A.88.88 0 0 1 14.9 18.94A.88.88 0 0 1 15.78 19.83A.88.88 0 0 1 14.9 20.71Z"
+          fill="#3776AB"
+        />
+      </svg>
+    )
+  }
+
+  // Laravel
+  if (norm.includes("laravel")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <path
+          d="M3.75 6.75L12 2l8.25 4.75v9.5L12 21l-8.25-4.75v-9.5z"
+          stroke="#FF2D20"
+          strokeWidth="1.5"
+          fill="rgba(255,45,32,0.15)"
+        />
+        <path d="M12 2v19M3.75 6.75L12 11.5l8.25-4.75M3.75 16.25L12 11.5l8.25 4.75" stroke="#FF2D20" strokeWidth="1.2" />
+      </svg>
+    )
+  }
+
+  // PHP
+  if (norm.includes("php")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <rect width="24" height="24" rx="4" fill="#777BB4" />
+        <path d="M5 8h3a3 3 0 0 1 0 6H6v3H5V8zm2 2v2h1a1 1 0 0 0 0-2H7zm4-2h1v9h-1V8zm3 0h3a3 3 0 0 1 0 6h-2v3h-1V8zm2 2v2h1a1 1 0 0 0 0-2h-1z" fill="#FFF" />
+      </svg>
+    )
+  }
+
+  // OpenCV
+  if (norm.includes("opencv") || norm.includes("computer vision")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="7" r="4.5" stroke="#E51C24" strokeWidth="2" fill="none" />
+        <circle cx="7" cy="16" r="4.5" stroke="#1E88E5" strokeWidth="2" fill="none" />
+        <circle cx="17" cy="16" r="4.5" stroke="#4CAF50" strokeWidth="2" fill="none" />
+      </svg>
+    )
+  }
+
+  // TensorFlow / Keras / AI / Deep Learning
+  if (norm.includes("tensorflow") || norm.includes("keras") || norm.includes("deep learning") || norm.includes("autoencoder")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <path d="M12 2L3 7v10l9 5 9-5V7L12 2z" fill="#FF6F00" fillOpacity="0.2" stroke="#FF6F00" strokeWidth="1.5" />
+        <path d="M12 2v20M3 7l9 5 9-5M3 17l9-5 9 5" stroke="#FF6F00" strokeWidth="1.5" />
+      </svg>
+    )
+  }
+
+  // Java
+  if (norm.includes("java")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <path d="M7 17s.5 1.5 5 1.5 5-1.5 5-1.5" stroke="#E76F00" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M5 20s1 2 7 2 7-2 7-2" stroke="#E76F00" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M12 3c-2 2-3 4-1 6s-2 3-3 4" stroke="#5382A1" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M16 5c-2 2-2 4 0 6s-1 3-2 4" stroke="#5382A1" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    )
+  }
+
+  // Prisma ORM
+  if (norm.includes("prisma")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <path d="M5.5 19.5L12 3l6.5 16.5-6.5-3-6.5 3z" fill="#2D3748" stroke="#16A34A" strokeWidth="1.5" />
+      </svg>
+    )
+  }
+
   // Tailwind CSS
   if (norm.includes("tailwind")) {
     return (
@@ -83,19 +162,6 @@ export function TechIcon({ name, className = "w-6 h-6", size = 24 }: TechIconPro
           d="M12.001 4.8c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624C13.666 10.618 15.027 12 18.001 12c3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C16.336 6.182 14.975 4.8 12.001 4.8zm-6 7.2c-3.2 0-5.2 1.6-6 4.8 1.2-1.6 2.6-2.2 4.2-1.8.913.228 1.565.89 2.288 1.624 1.177 1.194 2.538 2.576 5.512 2.576 3.2 0 5.2-1.6 6-4.8-1.2 1.6-2.6 2.2-4.2 1.8-.913-.228-1.565-.89-2.288-1.624C10.336 13.382 8.975 12 6.001 12z"
           fill="#38BDF8"
         />
-      </svg>
-    )
-  }
-
-  // Figma
-  if (norm.includes("figma")) {
-    return (
-      <svg className={className} width={size} height={size} viewBox="0 0 38 57" fill="none">
-        <path d="M19 28.5A9.5 9.5 0 1 1 28.5 19 9.5 9.5 0 0 1 19 28.5z" fill="#1ABCFE" />
-        <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" fill="#0ACF83" />
-        <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" fill="#FF7262" />
-        <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" fill="#F24E1E" />
-        <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" fill="#A259FF" />
       </svg>
     )
   }
@@ -116,8 +182,8 @@ export function TechIcon({ name, className = "w-6 h-6", size = 24 }: TechIconPro
     )
   }
 
-  // Node.js
-  if (norm.includes("node")) {
+  // Node.js / Express
+  if (norm.includes("node") || norm.includes("express")) {
     return (
       <svg className={className} width={size} height={size} viewBox="0 0 32 32">
         <path
@@ -128,32 +194,54 @@ export function TechIcon({ name, className = "w-6 h-6", size = 24 }: TechIconPro
     )
   }
 
-  // Python
-  if (norm.includes("python")) {
+  // Socket.io / WebSockets
+  if (norm.includes("socket") || norm.includes("websocket")) {
     return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24">
-        <path
-          d="M11.91 2C6.98 2 7.29 4.14 7.29 4.14L7.3 6.35H12V7.07H4.37S2 6.8 2 11.75C2 16.7 4.1 16.48 4.1 16.48H5.64V14.28S5.56 11.66 8.28 11.66H12.92S15.44 11.66 15.44 9.17V4.54S15.82 2 11.91 2M9.1 3.29A.88.88 0 0 1 10 4.17A.88.88 0 0 1 9.1 5.06A.88.88 0 0 1 8.22 4.17A.88.88 0 0 1 9.1 3.29M12.09 22C17.02 22 16.71 19.86 16.71 19.86L16.7 17.65H12V16.93H19.63S22 17.2 22 12.25C22 7.3 19.9 7.52 19.9 7.52H18.36V9.72S18.44 12.34 15.72 12.34H11.08S8.56 12.34 8.56 14.83V19.46S8.18 22 12.09 22M14.9 20.71A.88.88 0 0 1 14 19.83A.88.88 0 0 1 14.9 18.94A.88.88 0 0 1 15.78 19.83A.88.88 0 0 1 14.9 20.71Z"
-          fill="#3776AB"
-        />
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="9" stroke="#010101" strokeWidth="2" />
+        <path d="M12 6l-4 7h4l-1 5 5-7h-4l1-5z" fill="#010101" />
       </svg>
     )
   }
 
-  // HTML5
-  if (norm.includes("html")) {
+  // Firebase
+  if (norm.includes("firebase")) {
     return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24">
-        <path d="M12 17.56l4.07-1.13.55-6.14H7.38l.22 2.53h6.41l-.23 2.57-1.78.48-1.78-.48-.12-1.32H7.66l.24 2.61L12 17.56M4.19 3l1.45 16.27L12 21.5l6.36-2.23L19.81 3H4.19z" fill="#E34F26" />
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
+        <path d="M4.5 18.5L8.5 3.5l3.5 6.5-7.5 8.5z" fill="#FFA000" />
+        <path d="M19.5 18.5L16 7.5l-4 8.5h7.5z" fill="#FFCA28" />
+        <path d="M4.5 18.5l7.5 4.5 7.5-4.5-7.5-6-7.5 6z" fill="#FF8F00" />
       </svg>
     )
   }
 
-  // CSS3
-  if (norm.includes("css")) {
+  // Chart.js / Visualization
+  if (norm.includes("chart")) {
     return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24">
-        <path d="M5.64 19.27L4.19 3h15.62l-1.45 16.27L12 21.5l-6.36-2.23zm10.98-9H8.22l.24 2.62h8.04l-.56 6.27-3.94 1.09-3.94-1.09-.26-2.88H5.77l.46 5.16L12 23.14l5.77-1.6 1.15-12.89-.3-1.38z" fill="#1572B6" />
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#FF6384" strokeWidth="2">
+        <path d="M18 20V10M12 20V4M6 20v-6" />
+      </svg>
+    )
+  }
+
+  // IoT / ESP32 / PlatformIO / Hardware
+  if (norm.includes("esp32") || norm.includes("iot") || norm.includes("hardware") || norm.includes("platformio")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#F58220" strokeWidth="1.8">
+        <rect x="4" y="4" width="16" height="16" rx="2" />
+        <rect x="8" y="8" width="8" height="8" rx="1" fill="#F58220" fillOpacity="0.3" />
+        <path d="M9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3" />
+      </svg>
+    )
+  }
+
+  // MySQL / Postgres / Database / SQL
+  if (norm.includes("mysql") || norm.includes("postgres") || norm.includes("sql") || norm.includes("database")) {
+    return (
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <ellipse cx="12" cy="5" rx="9" ry="3" stroke="#00758F" />
+        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" stroke="#00758F" />
+        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" stroke="#00758F" />
       </svg>
     )
   }
@@ -182,62 +270,33 @@ export function TechIcon({ name, className = "w-6 h-6", size = 24 }: TechIconPro
     )
   }
 
-  // MySQL / Postgres / Database / SQL
-  if (norm.includes("mysql") || norm.includes("postgres") || norm.includes("sql") || norm.includes("data")) {
+  // Figma / UI / UX
+  if (norm.includes("figma") || norm.includes("ui") || norm.includes("ux") || norm.includes("design")) {
     return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <ellipse cx="12" cy="5" rx="9" ry="3" stroke="#00758F" />
-        <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3" stroke="#00758F" />
-        <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5" stroke="#00758F" />
+      <svg className={className} width={size} height={size} viewBox="0 0 38 57" fill="none">
+        <path d="M19 28.5A9.5 9.5 0 1 1 28.5 19 9.5 9.5 0 0 1 19 28.5z" fill="#1ABCFE" />
+        <path d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z" fill="#0ACF83" />
+        <path d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z" fill="#FF7262" />
+        <path d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z" fill="#F24E1E" />
+        <path d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z" fill="#A259FF" />
       </svg>
     )
   }
 
-  // PHP
-  if (norm.includes("php")) {
+  // HTML5
+  if (norm.includes("html")) {
     return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none">
-        <rect width="24" height="24" rx="4" fill="#777BB4" />
-        <path d="M5 8h3a3 3 0 0 1 0 6H6v3H5V8zm2 2v2h1a1 1 0 0 0 0-2H7zm4-2h1v9h-1V8zm3 0h3a3 3 0 0 1 0 6h-2v3h-1V8zm2 2v2h1a1 1 0 0 0 0-2h-1z" fill="#FFF" />
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24">
+        <path d="M12 17.56l4.07-1.13.55-6.14H7.38l.22 2.53h6.41l-.23 2.57-1.78.48-1.78-.48-.12-1.32H7.66l.24 2.61L12 17.56M4.19 3l1.45 16.27L12 21.5l6.36-2.23L19.81 3H4.19z" fill="#E34F26" />
       </svg>
     )
   }
 
-  // Android
-  if (norm.includes("android")) {
+  // CSS3
+  if (norm.includes("css")) {
     return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="#3DDC84">
-        <path d="M6 18c0 .55.45 1 1 1h1v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h2v3.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V19h1c.55 0 1-.45 1-1V8H6v10zM3.5 8C2.67 8 2 8.67 2 9.5v6c0 .83.67 1.5 1.5 1.5S5 16.33 5 15.5v-6C5 8.67 4.33 8 3.5 8zm17 0c-.83 0-1.5.67-1.5 1.5v6c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5zm-4.97-4.84l1.3-1.3c.2-.2.2-.51 0-.71a.495.495 0 0 0-.7 0l-1.48 1.48C13.85 2.23 12.95 2 12 2c-.96 0-1.86.23-2.66.63L7.85 1.15a.495.495 0 0 0-.7 0c-.2.2-.2.51 0 .71l1.31 1.31C6.73 4.16 5.57 5.91 5.5 8h13c-.07-2.09-1.23-3.84-2.97-4.84zM9 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2zm6 0a1 1 0 1 1 0-2 1 1 0 0 1 0 2z" />
-      </svg>
-    )
-  }
-
-  // UI / UX / Design
-  if (norm.includes("ui") || norm.includes("ux") || norm.includes("design")) {
-    return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-        <path d="M12 20h9" stroke="#E11D48" />
-        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" stroke="#E11D48" />
-      </svg>
-    )
-  }
-
-  // Animation / Motion
-  if (norm.includes("motion") || norm.includes("animation")) {
-    return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#F43F5E" strokeWidth="2">
-        <polygon points="5 3 19 12 5 21 5 3" fill="#F43F5E" fillOpacity="0.2" />
-      </svg>
-    )
-  }
-
-  // Canvas / Graphic
-  if (norm.includes("canvas") || norm.includes("graphic")) {
-    return (
-      <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" strokeWidth="2">
-        <rect x="3" y="3" width="18" height="18" rx="2" />
-        <circle cx="8.5" cy="8.5" r="1.5" />
-        <polyline points="21 15 16 10 5 21" />
+      <svg className={className} width={size} height={size} viewBox="0 0 24 24">
+        <path d="M5.64 19.27L4.19 3h15.62l-1.45 16.27L12 21.5l-6.36-2.23zm10.98-9H8.22l.24 2.62h8.04l-.56 6.27-3.94 1.09-3.94-1.09-.26-2.88H5.77l.46 5.16L12 23.14l5.77-1.6 1.15-12.89-.3-1.38z" fill="#1572B6" />
       </svg>
     )
   }
