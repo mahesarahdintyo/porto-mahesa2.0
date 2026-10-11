@@ -5,8 +5,9 @@ import { useScrollReveal } from "./use-scroll-reveal"
 import { usePortfolioData } from "./portfolio-data-provider"
 import { BrushDivider } from "./motifs"
 import { TechIcon } from "./tech-icons"
+import { SkillsSphere3D } from "./skills-sphere-3d"
 import { useHanakageTheme } from "./theme-provider"
-import { LayoutGrid, Code2, Layers, Puzzle, Wrench, Network } from "lucide-react"
+import { LayoutGrid, Code2, Layers, Puzzle, Wrench, Network, Orbit } from "lucide-react"
 
 const CATEGORY_FILTERS = [
   { id: "ALL",          label: "Semua",        icon: LayoutGrid },
@@ -18,6 +19,7 @@ const CATEGORY_FILTERS = [
 ] as const
 
 type FilterId = typeof CATEGORY_FILTERS[number]["id"]
+type ViewMode = "3d" | "grid"
 
 function SkillCard({
   name,
@@ -73,6 +75,7 @@ export function SkillsSection() {
   const { theme } = useHanakageTheme()
   const isDark = theme === "yurei"
   const [activeFilter, setActiveFilter] = useState<FilterId>("ALL")
+  const [viewMode, setViewMode] = useState<ViewMode>("3d")
 
   const availableFilters = useMemo(() => {
     const usedCategories = new Set(skills.map((s) => s.category))
@@ -92,8 +95,64 @@ export function SkillsSection() {
         <BrushDivider />
       </div>
 
+      {/* Control bar: Skill count & 3D / Grid View Mode Switcher */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mt-8 mb-4">
+        <div className="flex items-center gap-2 text-xs font-mono">
+          <span className="font-semibold uppercase tracking-wider" style={{ color: "var(--text-primary)" }}>
+            Skills &amp; Tools
+          </span>
+          <span
+            className="px-2 py-0.5 rounded-full text-[10px] font-semibold"
+            style={{
+              background: isDark ? "rgba(122,111,163,0.15)" : "rgba(178,58,46,0.1)",
+              color: isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)",
+            }}
+          >
+            {filteredSkills.length} / {skills.length}
+          </span>
+        </div>
+
+        {/* View Mode Toggle: 3D Mode vs Grid Mode */}
+        <div className="flex items-center p-1 rounded-xl border backdrop-blur-md"
+          style={{
+            borderColor: isDark ? "rgba(122, 111, 163, 0.2)" : "rgba(178, 58, 46, 0.18)",
+            background: isDark ? "rgba(15, 14, 20, 0.6)" : "rgba(255, 255, 255, 0.6)",
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setViewMode("3d")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 cursor-pointer"
+            style={{
+              background: viewMode === "3d" ? (isDark ? "rgba(122,111,163,0.25)" : "rgba(178,58,46,0.15)") : "transparent",
+              color: viewMode === "3d" ? (isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)") : "var(--text-muted)",
+              fontWeight: viewMode === "3d" ? 600 : 400,
+              boxShadow: viewMode === "3d" ? "0 2px 8px rgba(0,0,0,0.1)" : "none",
+            }}
+          >
+            <Orbit size={13} />
+            <span>3D Mode</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("grid")}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-mono transition-all duration-200 cursor-pointer"
+            style={{
+              background: viewMode === "grid" ? (isDark ? "rgba(122,111,163,0.25)" : "rgba(178,58,46,0.15)") : "transparent",
+              color: viewMode === "grid" ? (isDark ? "var(--accent-ghost, #7a6fa3)" : "var(--accent-seal)") : "var(--text-muted)",
+              fontWeight: viewMode === "grid" ? 600 : 400,
+              boxShadow: viewMode === "grid" ? "0 2px 8px rgba(0,0,0,0.1)" : "none",
+            }}
+          >
+            <LayoutGrid size={13} />
+            <span>Grid Mode</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Category filter tabs */}
       {availableFilters.length > 1 && (
-        <div className="flex flex-wrap gap-2 mt-8 mb-6" role="tablist" aria-label="Filter skills">
+        <div className="flex flex-wrap gap-2 mb-6" role="tablist" aria-label="Filter skills">
           {availableFilters.map((filter) => {
             const isActive = activeFilter === filter.id
             const IconComp = filter.icon
@@ -128,14 +187,19 @@ export function SkillsSection() {
         </div>
       )}
 
+      {/* Content area: 3D Sphere or Grid View */}
       {filteredSkills.length === 0 ? (
         <div className="py-12 px-6 text-center border border-dashed rounded-xl border-stone-500/20 opacity-60 text-sm hanakage-body-text">
           Belum ada keahlian yang ditambahkan.
         </div>
+      ) : viewMode === "3d" ? (
+        <div className="animate-in fade-in duration-300">
+          <SkillsSphere3D skills={filteredSkills} isDark={isDark} />
+        </div>
       ) : (
         <div
           key={activeFilter}
-          className="grid gap-3"
+          className="grid gap-3 animate-in fade-in duration-300"
           style={{ gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", animation: "hanakage-fade-up 0.35s ease both" }}
         >
           {filteredSkills.map((skill, index) => (
